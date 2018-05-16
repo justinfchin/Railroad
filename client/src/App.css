@@ -19,6 +19,10 @@
   font-size: large;
 }
 
+.Banner {
+  width: 100%;
+}
+
 .Head {
   display: block;
   background-color: #226D77;
@@ -103,12 +107,15 @@
 
 .Trips {
   display: flex;
-  width: 50%;
-  margin: 5% 35%;
+  width: 32.5%;
+  margin: 2% 35%;
+  /*background-color: #727272;
+  padding: 0.5em 0.2em;
+  border-style: solid;*/
 }
 
 .Results {
-
+  margin: 0 auto;
 }
 
 tr {
@@ -121,8 +128,22 @@ tr {
 }
 
 td, th {
-  outline: thin solid;
-  font-size: 1.5em;
+  outline: solid;
+  font-size: 1.3em;
+  outline-color: #000000;
+  padding: 0.5em;
+}
+
+tbody {
+  outline: thick solid;
+}
+
+th {
+  background-color: #15D388;
+}
+
+.row {
+  background-color: #B8DEEA;
 }
 
 .row:hover {
