@@ -59,6 +59,12 @@
   text-align: center;
   margin-right: -0.35em;
   margin-left: -0.35em;
+  color: transparent;
+  text-shadow: 0 0 0 black;
+}
+
+.pass_input:focus {
+  outline: none;
 }
 
 .LessPass, .MorePass {
@@ -72,6 +78,9 @@
   border-color: #15D388;
   background-color: #15D388;
   cursor: crosshair;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .submit {
