@@ -163,7 +163,8 @@ class Modal extends React.Component {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       zIndex: '9999',
-      background: '#33A7B7',
+      background: '#B8DEEA',
+      border: 'solid',
     }
 
     let backdropStyle = {
@@ -190,6 +191,60 @@ class Modal extends React.Component {
     if (this.props.onClose) {
       this.props.onClose()
     }
+  }
+}
+
+class NumAdults extends Component {
+  render() {
+    return (
+      <div className="NumAdults">
+        <input className="pass_input" type="input_bar"/>
+      </div>
+    );
+  }
+}
+
+class NumSeniors extends Component {
+  render() {
+    return (
+      <div className="NumSeniors">
+        <input className="pass_input" type="input_bar"/>
+      </div>
+    );
+  }
+}
+
+class NumChildren extends Component {
+  render() {
+    return (
+      <div className="NumChildren">
+        <input className="pass_input" type="input_bar"/>
+      </div>
+    );
+  }
+}
+
+class ReservationSpecs extends Component {
+  render() {
+    return (
+      <div className="ReservationSpecs">
+        <div className="NumPassType">
+          <LessPass/>
+            <NumAdults/>
+          <MorePass/>
+        </div>
+        <div className="NumPassType">
+          <LessPass/>
+            <NumSeniors/>
+          <MorePass/>
+        </div>
+        <div className="NumPassType">
+          <LessPass/>
+            <NumChildren/>
+          <MorePass/>
+        </div>
+      </div>
+    );
   }
 }
 
@@ -259,7 +314,7 @@ class Results extends Component {
           </table>
         </div>
         <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()}>
-            Insert Trip Specs Components Here
+            <ReservationSpecs/>
         </Modal>
       </div>
     );

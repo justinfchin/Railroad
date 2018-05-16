@@ -117,7 +117,6 @@
 tr {
   text-align: center;
   /*outline: thin solid;*/
-  cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -141,6 +140,7 @@ th {
 
 .row {
   background-color: #B8DEEA;
+  cursor: pointer;
 }
 
 .row:hover {
@@ -149,6 +149,20 @@ th {
 
 .Modal {
   font-size: 10em;
+}
+
+.ReservationSpecs {
+  padding: 5em;
+  display: flex;
+}
+
+.NumAdults, .NumSeniors, .NumChildren {
+  margin-top: 0.5em;
+}
+
+.NumPassType {
+  margin-right: 1em;
+  display: flex;
 }
 
 @keyframes App-logo-spin {
