@@ -389,21 +389,21 @@ class Results extends Component {
                 <th>Date</th>
               </tr>
               <tr className="row" onClick={this.openModal}>
-                <td>{this.props.date.format('LT')}</td>
-                <td>{this.props.date.format('LT')}</td>
-                <td>{this.props.seatsFree}</td>
+                <td>3:45 PM</td>
+                <td>4:45 PM</td>
+                <td>7</td>
                 <td>{this.props.date.format('L')}</td>
               </tr>
               <tr className="row" onClick={this.openModal}>
-                <td>{this.props.date.format('LT')}</td>
-                <td>{this.props.date.format('LT')}</td>
-                <td>{this.props.seatsFree}</td>
+                <td>4:00 PM</td>
+                <td>5:00 PM</td>
+                <td>12</td>
                 <td>{this.props.date.format('L')}</td>
               </tr>
               <tr className="row" onClick={this.openModal}>
-                <td>{this.props.date.format('LT')}</td>
-                <td>{this.props.date.format('LT')}</td>
-                <td>{this.props.seatsFree}</td>
+                <td>5:15 PM</td>
+                <td>6:15 PM</td>
+                <td>3</td>
                 <td>{this.props.date.format('L')}</td>
               </tr>
             </tbody>
