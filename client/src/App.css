@@ -19,13 +19,19 @@
   font-size: large;
 }
 
-.TripInfo {
-  display: inline-block;
-  align-content: center;
+.Head {
+  display: block;
+  background-color: #226D77;
+  height: 8em;
+  width: auto;
+  margin-top: -0.5em;
+  padding-top: 1em;
 }
 
-.Stations, .PassengerType {
+.TripInfo {
   display: flex;
+  width: 70%;
+  margin: 0 auto;
 }
 
 .Origin, .Destination, .NumPassengers{
@@ -33,21 +39,45 @@
 }
 
 .Date {
-  margin-top: 0.25em;
+  margin-top: 0.35em;
   margin-left: 0.25em;
   height: 1.5em;
-  font-size: 2em;
+  font-size: 1.5em;
   text-align: center;
 }
 
 .input_bar {
   height: 1.5em;
-  font-size: 2em;
+  font-size: 1.5em;
   text-align: center;
 }
 
+.pass_input {
+  height: 1.5em;
+  width: 1.5em;
+  font-size: 1.5em;
+  text-align: center;
+  margin-right: -0.35em;
+  margin-left: -0.35em;
+}
+
+.LessPass, .MorePass {
+  height: 1.5em;
+  width: 1em;
+  font-size: 1.5em;
+  margin-top: 0.35em;
+  line-height: 1.5em;
+  text-align: center;
+  border-style: solid;
+  border-color: #15D388;
+  background-color: #15D388;
+  cursor: crosshair;
+}
+
 .submit {
-  font-size: 4em;
+  margin-top: 1em;
+  font-size: 1em;
+  padding: 0.5em;
 }
 
 @keyframes App-logo-spin {

@@ -47,10 +47,10 @@ class NumPassengers extends Component {
   render() {
     return (
       <div className="NumPassengers">
-        <input ref="passengers" className="input_bar" placeholder="# of Passengers" list="passengers"/>
-        <datalist id="passengers">
+        <input ref="passengers" className="pass_input" value={this.props.numPassengers} /*placeholder="# of Passengers"*/ list="passengers"/>
+        {/*<datalist id="passengers">
           {this.props.passengers.map(this.createOptions)}
-        </datalist>
+        </datalist>*/}
       </div>
     );
   }
@@ -78,20 +78,73 @@ class Date extends Component {
   }
 }
 
-class TripInfo extends Component {
+class LessPass extends Component {
+  handleClick = () => {
+    this.props.lessPass();
+  };
+
   render() {
     return (
-      <div className="TripInfo">
-        <div className="Stations">
+      <div className="LessPass" onClick={this.handleClick}>-</div>
+    );
+  }
+}
+
+class MorePass extends Component {
+  handleClick = () => {
+    if(this.props.numPassengers < 8){
+      this.props.morePass();
+    }else{
+      alert("Too many guests");
+    }
+  };
+
+  render() {
+    return (
+      <div className="MorePass" onClick={this.handleClick}>+</div>
+    );
+  }
+}
+
+class TripInfo extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      numPassengers: 0,
+    };
+  }
+
+  lessPass = () => {
+    var prevNumPassengers = this.state.numPassengers;
+    if(prevNumPassengers > 0){
+      this.setState({
+        numPassengers: prevNumPassengers - 1,
+      });
+    }
+  };
+
+  morePass = () => {
+    var prevNumPassengers = this.state.numPassengers;
+    if(prevNumPassengers >= 0){
+      this.setState({
+        numPassengers: prevNumPassengers + 1,
+      });
+    }
+  };
+
+  render() {
+    return (
+      <div className="Head">
+        <div className="TripInfo">
+          <Date/>
           <Origin stations={this.props.stations}/>
           <Destination stations={this.props.stations}/>
-        </div>
-        <div className="PassengerType">
-          <NumPassengers passengers={[1,2,3,4,5,6,7,8]}/>
-          <Date/>
+          <LessPass numPassengers={this.state.numPassengers} lessPass={this.lessPass}/>
+          <NumPassengers numPassengers={this.state.numPassengers}/>
+          <MorePass numPassengers={this.state.numPassengers} morePass={this.morePass}/>
         </div>
         <div>
-          <input className="submit" type="submit"/>
+          <button className="submit">Submit</button>
         </div>
       </div>
     );
