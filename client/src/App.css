@@ -61,14 +61,16 @@
 }
 
 .pass_input {
-  height: 1.5em;
+  height: 100%;
   width: 1.5em;
   font-size: 1.5em;
   text-align: center;
   margin-right: -0.35em;
   margin-left: -0.35em;
+  margin-top: -0.35em;
   color: transparent;
   text-shadow: 0 0 0 black;
+  box-sizing: border-box;
 }
 
 .pass_input:focus {
@@ -76,19 +78,33 @@
 }
 
 .LessPass, .MorePass {
-  height: 1.5em;
+  height: 100%;
   width: 1em;
   font-size: 1.5em;
-  margin-top: 0.35em;
-  line-height: 1.5em;
+  line-height: 2em;
   text-align: center;
-  border-style: solid;
-  border-color: #15D388;
-  background-color: #15D388;
+  border-color: #E5E8E8;
+  background-color: #E5E8E8;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.LessPass:hover, .MorePass:hover {
+  background-color: #15D388;
+  border-color: #15D388;
+}
+
+.LessPass {
+  margin-right: 0.2em;
+}
+
+.MorePass {
+  margin-left: 0.2em;
 }
 
 .submit {
@@ -153,16 +169,43 @@ th {
 
 .ReservationSpecs {
   padding: 5em;
+}
+
+.PassengerCount {
   display: flex;
 }
 
 .NumAdults, .NumSeniors, .NumChildren {
   margin-top: 0.5em;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .NumPassType {
-  margin-right: 1em;
+  margin-right: 0.5em;
   display: flex;
+  border: thin solid;
+}
+
+.PassengerDescription {
+  position: relative;
+  padding-right: 6em;
+  padding-top: 0.6em;
+}
+
+.PassengerType {
+  position: absolute;
+}
+
+.PassengerAge {
+  position: absolute;
+  margin-top: 1em;
+}
+
+.continue {
+  margin-top: 5em;
+  font-size: 1em;
+  padding: 0.5em;
 }
 
 @keyframes App-logo-spin {

@@ -93,11 +93,7 @@ class LessPass extends Component {
 
 class MorePass extends Component {
   handleClick = () => {
-    if(this.props.numPassengers < 8){
-      this.props.morePass();
-    }else{
-      alert("Too many guests");
-    }
+    this.props.morePass();
   };
 
   render() {
@@ -140,9 +136,9 @@ class TripInfo extends Component {
           <Date date={this.props.date} updateDate={(date) => this.props.updateDate(date)}/>
           <Origin stations={this.props.stations}/>
           <Destination stations={this.props.stations}/>
-          <LessPass numPassengers={this.state.numPassengers} lessPass={this.lessPass}/>
+          {/*<LessPass numPassengers={this.state.numPassengers} lessPass={this.lessPass}/>
           <NumPassengers numPassengers={this.state.numPassengers}/>
-          <MorePass numPassengers={this.state.numPassengers} morePass={this.morePass}/>
+          <MorePass numPassengers={this.state.numPassengers} morePass={this.morePass}/>*/}
         </div>
         <div>
           <button className="submit" onClick={() => this.props.showResults(this.state.numPassengers)}>Check Availability</button>
@@ -198,7 +194,7 @@ class NumAdults extends Component {
   render() {
     return (
       <div className="NumAdults">
-        <input className="pass_input" type="input_bar"/>
+        <input className="pass_input" value={this.props.numAdults} type="input_bar"/>
       </div>
     );
   }
@@ -208,7 +204,7 @@ class NumSeniors extends Component {
   render() {
     return (
       <div className="NumSeniors">
-        <input className="pass_input" type="input_bar"/>
+        <input className="pass_input" value={this.props.numSeniors} type="input_bar"/>
       </div>
     );
   }
@@ -218,31 +214,132 @@ class NumChildren extends Component {
   render() {
     return (
       <div className="NumChildren">
-        <input className="pass_input" type="input_bar"/>
+        <input className="pass_input" value={this.props.numChildren} type="input_bar"/>
       </div>
     );
   }
 }
 
 class ReservationSpecs extends Component {
+  lessAdults = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var currAdultsCount = prevAdultsCount-1;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    if(currAdultsCount <= 0 && prevSeniorsCount <= 0 && prevChildrenCount > 0){
+      alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
+      return;
+    }
+    if(prevAdultsCount > 0){
+      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount);
+    }
+  };
+
+  moreAdults = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var currAdultsCount = prevAdultsCount+1;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
+      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount);
+    }else{
+      alert("For parties of 9 or more, email for booking.");
+    }
+  };
+
+  lessSeniors = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var currSeniorsCount = prevSeniorsCount-1;
+    var prevChildrenCount = this.props.numPassengers.children;
+    if(currSeniorsCount <= 0 && prevAdultsCount <= 0 && prevChildrenCount > 0){
+      alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
+      return;
+    }
+    if(prevSeniorsCount > 0){
+      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount);
+    }
+  };
+
+  moreSeniors = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var currSeniorsCount = prevSeniorsCount+1;
+    var prevChildrenCount = this.props.numPassengers.children;
+    if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
+      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount);
+    }else{
+      alert("For parties of 9 or more, email for booking.");
+    }
+  };
+
+  lessChildren = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    var currChildrenCount = prevChildrenCount-1;
+    if(prevChildrenCount > 0){
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount);
+    }
+  };
+
+  moreChildren = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    var currChildrenCount = prevChildrenCount+1;
+    if(prevAdultsCount === 0 && prevSeniorsCount === 0){
+      alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
+      return;
+    }else if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount);
+    }else{
+      alert("For parties of 9 or more, email for booking.");
+    }
+  };
+
+  handleClick = () => {
+    var adultsCount = this.props.numPassengers.adults;
+    var seniorsCount = this.props.numPassengers.seniors;
+    var childrenCount = this.props.numPassengers.children;
+    if(adultsCount + seniorsCount + childrenCount === 0){
+      alert("Add at least 1 adult or 1 senior to itinerary.")
+    }
+  }
+
   render() {
     return (
       <div className="ReservationSpecs">
-        <div className="NumPassType">
-          <LessPass/>
-            <NumAdults/>
-          <MorePass/>
+        <div className="PassengerCount">
+          <div className="NumPassType">
+            <LessPass lessPass={this.lessAdults}/>
+              <NumAdults numAdults={this.props.numPassengers.adults}/>
+            <MorePass morePass={this.moreAdults}/>
+          </div>
+          <div className="PassengerDescription">
+            <div className="PassengerType">Adults</div>
+            <div className="PassengerAge">13-64</div>
+          </div>
+          <div className="NumPassType">
+            <LessPass lessPass={this.lessSeniors}/>
+              <NumSeniors numSeniors={this.props.numPassengers.seniors}/>
+            <MorePass morePass={this.moreSeniors}/>
+          </div>
+          <div className="PassengerDescription">
+            <div className="PassengerType">Seniors</div>
+            <div className="PassengerAge">65+</div>
+          </div>
+          <div className="NumPassType">
+            <LessPass lessPass={this.lessChildren}/>
+              <NumChildren numChildren={this.props.numPassengers.children}/>
+            <MorePass morePass={this.moreChildren}/>
+          </div>
+          <div className="PassengerDescription">
+            <div className="PassengerType">Children</div>
+            <div className="PassengerAge">2-12</div>
+          </div>
         </div>
-        <div className="NumPassType">
-          <LessPass/>
-            <NumSeniors/>
-          <MorePass/>
-        </div>
-        <div className="NumPassType">
-          <LessPass/>
-            <NumChildren/>
-          <MorePass/>
-        </div>
+        <button className="continue" onClick={() => this.handleClick()}>Continue</button>
       </div>
     );
   }
@@ -258,7 +355,6 @@ class Results extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.state.date, nextProps.date);
     this.setState({
       date: nextProps.date,
     });
@@ -314,7 +410,7 @@ class Results extends Component {
           </table>
         </div>
         <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()}>
-            <ReservationSpecs/>
+            <ReservationSpecs numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)}/>
         </Modal>
       </div>
     );
@@ -327,27 +423,45 @@ class App extends Component {
     this.state = {
       date: moment(),
       stations: [],
-      numPassengers: 1,
+      //numPassengers: 1,
+      numPassengers: {
+        adults: 0,
+        seniors: 0,
+        children: 0,
+      },
       showResults: false,
       seatsFree: "# seats free"
     };
   };
 
   showResults = (numPassengers) => {
-    if(numPassengers > 0){
+    this.setState({
+      showResults: true,
+    });
+    /*if(numPassengers > 0){
       this.setState({
         showResults: true,
       });
     }else{
       alert("Increase passenger count!");
-    }
-  }
+    }*/
+  };
 
   updateDate = (date) => {
     this.setState({
       date: date,
     });
-  }
+  };
+
+  updateNumPassengers = (newAdults,newSeniors,newChildren) => {
+    this.setState({
+      numPassengers: {
+        adults: newAdults,
+        seniors: newSeniors,
+        children: newChildren,
+      }
+    });
+  };
 
   render() {
     return (
@@ -356,7 +470,8 @@ class App extends Component {
           <img src={banner} className="Banner"/>
         </header>
         <TripInfo date={this.state.date} updateDate={(date) => this.updateDate(date)} stations={this.state.stations} numPassengers={this.state.numPassengers} showResults={(numPassengers) => this.showResults(numPassengers)}/>
-        <Results showResults={this.state.showResults} seatsFree={this.state.seatsFree} date={this.state.date}/>
+        <Results showResults={this.state.showResults} seatsFree={this.state.seatsFree} date={this.state.date} 
+        numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children) => this.updateNumPassengers(adults,seniors,children)}/>
       </div>
     );
   }
