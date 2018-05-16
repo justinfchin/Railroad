@@ -232,21 +232,25 @@ class Results extends Component {
           <table className="Results">
             <tbody>
               <tr className="headRow">
-                <th>Time</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
                 <th>Available Seats</th>
                 <th>Date</th>
               </tr>
               <tr className="row" onClick={this.openModal}>
                 <td>{this.props.date.format('LT')}</td>
-                <td>{this.props.seatsFree}</td>
-                <td>{this.props.date.format('L')}</td>
-              </tr>
-              <tr className="row" onClick={this.openModal}>
                 <td>{this.props.date.format('LT')}</td>
                 <td>{this.props.seatsFree}</td>
                 <td>{this.props.date.format('L')}</td>
               </tr>
               <tr className="row" onClick={this.openModal}>
+                <td>{this.props.date.format('LT')}</td>
+                <td>{this.props.date.format('LT')}</td>
+                <td>{this.props.seatsFree}</td>
+                <td>{this.props.date.format('L')}</td>
+              </tr>
+              <tr className="row" onClick={this.openModal}>
+                <td>{this.props.date.format('LT')}</td>
                 <td>{this.props.date.format('LT')}</td>
                 <td>{this.props.seatsFree}</td>
                 <td>{this.props.date.format('L')}</td>
