@@ -38,6 +38,10 @@
   padding: 0.5em;
 }
 
+.Origin {
+  padding-right: 0;
+}
+
 .Date {
   margin-top: 0.35em;
   margin-left: 0.25em;
@@ -77,7 +81,7 @@
   border-style: solid;
   border-color: #15D388;
   background-color: #15D388;
-  cursor: crosshair;
+  cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -87,6 +91,46 @@
   margin-top: 1em;
   font-size: 1em;
   padding: 0.5em;
+}
+
+.Body {
+  display: block;
+  height: 8em;
+  width: auto;
+  margin-top: -0.5em;
+  padding-top: 1em;
+}
+
+.Trips {
+  display: flex;
+  width: 50%;
+  margin: 5% 35%;
+}
+
+.Results {
+
+}
+
+tr {
+  text-align: left;
+  /*outline: thin solid;*/
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+td, th {
+  outline: thin solid;
+  font-size: 1.5em;
+}
+
+.row:hover {
+  background-color: yellow;
+}
+
+.Modal {
+  font-size: 10em;
 }
 
 @keyframes App-logo-spin {
