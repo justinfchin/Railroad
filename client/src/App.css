@@ -34,7 +34,7 @@
 
 .TripInfo {
   display: flex;
-  width: 70%;
+  width: 92%;
   margin: 0 auto;
 }
 
@@ -55,9 +55,9 @@
 }
 
 .input_bar {
-  height: 1.5em;
+  height: 1.8em;
   font-size: 1.5em;
-  text-align: center;
+  text-align-last: center;
 }
 
 .pass_input {
@@ -202,10 +202,50 @@ th {
   margin-top: 1em;
 }
 
-.continue {
-  margin-top: 5em;
-  font-size: 1em;
+.fareBook {
+  display: block;
+}
+
+.bookTrip {
+  margin-top: 10%;
+  font-size: 1.5em;
   padding: 0.5em;
+  border: thin solid;
+  background-color: #E5E8E8;
+  cursor: pointer;
+}
+
+.fare {
+  height: 2.1em;
+  width: 5em;
+  margin-right: 2em;
+  margin-top: 10%;
+  font-size: 1.5em;
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #15D388;
+  padding: 0.5em;
+  border: thin solid;
+}
+
+.form_input {
+  height: 1.8em;
+  font-size: 1.5em;
+  text-align-last: center;
+  margin: 0.2em;
+}
+
+.x {
+  position: relative;
+  float: right;
+  background: transparent;
+  color: white;
+  font-size: 1em;
+  border-radius: 100em;
+  border: solid;
+  margin-right: 0.5em;
+  margin-top: 0.5em;
+  cursor: pointer;
 }
 
 @keyframes App-logo-spin {

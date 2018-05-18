@@ -13,10 +13,10 @@ class Origin extends Component {
   render() {
     return (
       <div className="Origin">
-        <input ref="origin" className="input_bar" placeholder="Origin" list="stations"/>
-        <datalist id="stations">
+        <select ref="origin" className="input_bar">
+          <option>-- Origin Station --</option>
           {this.props.stations.map(this.createOptions)}
-        </datalist>
+        </select>
       </div>
     );
   }
@@ -30,10 +30,10 @@ class Destination extends Component {
   render() {
     return (
       <div className="Destination">
-        <input ref="destination" className="input_bar" placeholder="Destination" list="stations"/>
-        <datalist id="stations">
+        <select ref="destination" className="input_bar">
+          <option>-- Destination Station --</option>
           {this.props.stations.map(this.createOptions)}
-        </datalist>
+        </select>
       </div>
     );
   }
@@ -141,7 +141,7 @@ class TripInfo extends Component {
           <MorePass numPassengers={this.state.numPassengers} morePass={this.morePass}/>*/}
         </div>
         <div>
-          <button className="submit" onClick={() => this.props.showResults(this.state.numPassengers)}>Check Availability</button>
+          <button className="submit" onClick={() => this.props.updateShowResults(this.state.numPassengers)}>Check Availability</button>
         </div>
       </div>
     );
@@ -175,14 +175,24 @@ class Modal extends React.Component {
 
     return (
       <div>
-        <div style={modalStyle}>{this.props.children}</div>
-        <div style={backdropStyle} onClick={e => this.close(e)}/>
+        <div style={modalStyle}>
+	        <button className="x" onClick={e => this.close(e)}>
+	            X
+	        </button>
+	        {this.props.children}
+        </div>
+        <div style={backdropStyle} /*onClick={e => this.close(e)}*//>
       </div>
     )
   }
 
   close(e) {
     e.preventDefault()
+
+    this.props.updateNumPassengers(0,0,0);
+    if(this.props.confirmPassCount){
+    	this.props.updateConfirmPassCount();
+    }
 
     if (this.props.onClose) {
       this.props.onClose()
@@ -221,6 +231,19 @@ class NumChildren extends Component {
 }
 
 class ReservationSpecs extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			display: this.props.confirmPassCount,
+		};
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			display: nextProps.confirmPassCount,
+		});
+	}
+
   lessAdults = () => {
     var prevAdultsCount = this.props.numPassengers.adults;
     var currAdultsCount = prevAdultsCount-1;
@@ -302,12 +325,31 @@ class ReservationSpecs extends Component {
     var adultsCount = this.props.numPassengers.adults;
     var seniorsCount = this.props.numPassengers.seniors;
     var childrenCount = this.props.numPassengers.children;
+    var date = this.props.date;
     if(adultsCount + seniorsCount + childrenCount === 0){
       alert("Add at least 1 adult or 1 senior to itinerary.")
+      return;
     }
+    this.props.updateConfirmPassCount();
+    fetch('reservations/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        adultsCount: adultsCount,
+        seniorsCount: seniorsCount,
+        childrenCount: childrenCount,
+        date: date,
+      }),
+    });
   }
 
   render() {
+  	if(this.state.display){
+  		return null;
+  	}
     return (
       <div className="ReservationSpecs">
         <div className="PassengerCount">
@@ -339,10 +381,51 @@ class ReservationSpecs extends Component {
             <div className="PassengerAge">2-12</div>
           </div>
         </div>
-        <button className="continue" onClick={() => this.handleClick()}>Continue</button>
+        <div className="fareBook">
+	        <text className="fare">{"Total: $" + 20}</text>
+	        <button className="bookTrip" onClick={() => this.handleClick()}>Continue</button>
+	    </div>
       </div>
     );
   }
+}
+
+class PassengerSpecs extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			display: this.props.confirmPassCount,
+		};
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			display: nextProps.confirmPassCount,
+		});
+	}
+
+	handleClick = () => {
+		this.props.updateNumPassengers(0,0,0);
+		this.props.updateConfirmPassCount();
+		this.props.updateShowResults();
+		this.props.onClose();
+	}
+
+	render() {
+		if(!this.state.display){
+			return null;
+		}
+		return (
+			<form className="ReservationSpecs">
+				<div>
+					<input className="form_input" placeholder="First Name"/>
+					<input className="form_input" placeholder="Last Name"/>
+					<input className="form_input" placeholder="Email"/>
+				</div>
+				<button className="bookTrip" onClick={() => this.handleClick()}>Book Trip</button>
+			</form>
+		);
+	}
 }
 
 class Results extends Component {
@@ -351,13 +434,20 @@ class Results extends Component {
     this.state = {
       isModalOpen: false,
       date: this.props.date,
+      confirmPassCount: false,
+      display: this.props.showResults,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
       date: nextProps.date,
+      display: nextProps.showResults,
     });
+  }
+
+  componentdidMount() {
+  	console.log(this.state);
   }
 
   openModal = () => {
@@ -370,10 +460,16 @@ class Results extends Component {
     this.setState({
       isModalOpen: false,
     });
+  }
+
+  updateConfirmPassCount = () => {
+  	this.setState({
+  		confirmPassCount: !this.state.confirmPassCount,
+  	});
   };
 
   render() {
-    if(!this.props.showResults){
+    if(!this.state.display){
       return null;
     }
 
@@ -409,8 +505,14 @@ class Results extends Component {
             </tbody>
           </table>
         </div>
-        <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()}>
-            <ReservationSpecs numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)}/>
+        <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()} 
+        		confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()}
+        		updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)}>
+            <ReservationSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} 
+            					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
+            					date={this.props.date}/>
+            <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
+            				updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} updateShowResults={() => this.props.updateShowResults()} onClose={() => this.closeModal()}/>
         </Modal>
       </div>
     );
@@ -422,7 +524,11 @@ class App extends Component {
     super(props);
     this.state = {
       date: moment(),
-      stations: [],
+      stations: ["Boston, MA - South Station","Boston, MA - Back Bay Station","Route 128, MA","Providence, RI","Kingston, RI",
+        "Westerly,RI","Mystic, CT","New London, CT","Old Saybrook, CT","New Haven, CT","Bridgeport, CT","Stamford, CT",
+        "New Rochelle, NY","New York, NY - Penn Station","Newark, NJ","Newark Liberty Intl. Air., NJ","Metro Park, NJ",
+        "Trenton, NJ","Philadelphia, PA - 30th Street Station","Wilmington, DE - J.R. Biden, Jr. Station","Aberdeen, MD",
+        "Baltimore, MD - Penn Station","BWI Marshall Airport, MD","New Carrollton, MD","Washington, DC - Union Station"],
       //numPassengers: 1,
       numPassengers: {
         adults: 0,
@@ -434,9 +540,9 @@ class App extends Component {
     };
   };
 
-  showResults = (numPassengers) => {
+  updateShowResults = (numPassengers) => {
     this.setState({
-      showResults: true,
+      showResults: !this.state.showResults,
     });
     /*if(numPassengers > 0){
       this.setState({
@@ -467,10 +573,11 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={banner} className="Banner"/>
+          <img src={banner}  alt="" className="Banner"/>
         </header>
-        <TripInfo date={this.state.date} updateDate={(date) => this.updateDate(date)} stations={this.state.stations} numPassengers={this.state.numPassengers} showResults={(numPassengers) => this.showResults(numPassengers)}/>
-        <Results showResults={this.state.showResults} seatsFree={this.state.seatsFree} date={this.state.date} 
+        <TripInfo date={this.state.date} updateDate={(date) => this.updateDate(date)} stations={this.state.stations} numPassengers={this.state.numPassengers} 
+        			updateShowResults={(numPassengers) => this.updateShowResults(numPassengers)}/>
+        <Results showResults={this.state.showResults} updateShowResults={(numPassengers) => this.updateShowResults(numPassengers)} seatsFree={this.state.seatsFree} date={this.state.date} 
         numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children) => this.updateNumPassengers(adults,seniors,children)}/>
       </div>
     );
