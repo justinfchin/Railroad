@@ -25,7 +25,11 @@ SECRET_KEY = 'd(^(5ahy#0kghu64p-0un5rqr2r7$%t-b3yut9$a_g8ir@pgcy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+        u'railroadbackend.appspot.com',
+        u'tsering.net',
+        u'www.tsering.net',
+        ]
 
 
 # Application definition
@@ -84,9 +88,8 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'HOST': '/cloudsql/railroadbackend:us-east4:railroad-backend-instance',
-            'PORT': '3306',
             'NAME': 'railroad',
-            'USER': 'norbs',
+            'USER': 'carlos',
             'PASSWORD': '#ccny1!',
         }
     }
