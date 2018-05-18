@@ -20,11 +20,11 @@ CSC336 Railroad Project Spring2018
 
 ## ER Diagram
 <a name="erd"></a>
-[er](https://github.com/justinfchin/Railroad/blob/master/diagrams/ERdiagram.png)
+![er](https://github.com/justinfchin/Railroad/blob/master/diagrams/ERdiagram.png)
 
 ## Flow Chart
 <a name="flowc"></a>
-[flow](https://github.com/justinfchin/Railroad/blob/master/diagrams/flowchart.png)
+![flow](https://github.com/justinfchin/Railroad/blob/master/diagrams/flowchart.png)
 
 ## Technology
 <a name="tech"></a>
