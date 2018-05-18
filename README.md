@@ -4,7 +4,7 @@ CSC336 Railroad Project Spring2018
 ### Site Demo:
 [Insert URL HERE]()
 
-### Contents:
+## Contents:
 1. [Background](#bg)
 2. [ER Diagram](#erd)
 3. [Flow Chart](#flowc)
