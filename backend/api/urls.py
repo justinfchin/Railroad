@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^passengers/$', views.passengers_list),
     url(r'^passengers/(?P<passenger_id>[0-9]+)/$', views.passenger_detail),
 
-    # url(r'^reservations/$', views.reservations_list),
+    url(r'^reservations/$', views.reservations_list),
     # url(r'^reservations/(?P<fare_id>[0-9]+)/$', views.reservation_detail),
     #
     # url(r'^seats_free/$', views.seats_free_list),
