@@ -86,7 +86,9 @@ def passenger_detail(request, passenger_id):
     """
     return __grab_detail(Passengers, PassengersSerializer, request, passenger_id=passenger_id)
 
-# def reservations_list(request):
+def reservations_list(request):
+    return __grab_list(Reservations, ReservationsSerializer, request)
+
 # def reservation_detail(request):
 
 # def seats_free_list(request):
