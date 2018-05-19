@@ -7,7 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 class Origin extends Component {
   createOptions = (option) => {
-    return <option>{option}</option>;
+    return <option key={option}>{option}</option>;
   }
 
   render() {
@@ -24,7 +24,7 @@ class Origin extends Component {
 
 class Destination extends Component {
   createOptions = (option) => {
-    return <option>{option}</option>;
+    return <option key={option}>{option}</option>;
   }
 
   render() {
@@ -331,19 +331,6 @@ class ReservationSpecs extends Component {
       return;
     }
     this.props.updateConfirmPassCount();
-    fetch('reservations/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        adultsCount: adultsCount,
-        seniorsCount: seniorsCount,
-        childrenCount: childrenCount,
-        date: date,
-      }),
-    });
   }
 
   render() {
@@ -405,6 +392,24 @@ class PassengerSpecs extends Component {
 	}
 
 	handleClick = () => {
+		var adultsCount = this.props.numPassengers.adults;
+	    var seniorsCount = this.props.numPassengers.seniors;
+	    var childrenCount = this.props.numPassengers.children;
+	    var date = this.props.date;
+	    fetch('reservations/', {
+	      method: 'POST',
+	      headers: {
+	        'Accept': 'application/json',
+	        'Content-Type': 'application/json',
+	      },
+	      body: JSON.stringify({
+	        adultsCount: adultsCount,
+	        seniorsCount: seniorsCount,
+	        childrenCount: childrenCount,
+	        date: date,
+	      }),
+	    });
+
 		this.props.updateNumPassengers(0,0,0);
 		this.props.updateConfirmPassCount();
 		this.props.updateShowResults();
@@ -512,7 +517,8 @@ class Results extends Component {
             					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
             					date={this.props.date}/>
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
-            				updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} updateShowResults={() => this.props.updateShowResults()} onClose={() => this.closeModal()}/>
+            				updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
+            				updateShowResults={() => this.props.updateShowResults()} onClose={() => this.closeModal()} date={this.props.date}/>
         </Modal>
       </div>
     );
@@ -539,6 +545,10 @@ class App extends Component {
       seatsFree: "# seats free"
     };
   };
+
+  componentWillMount() {
+  	fetch('stations/').then(res => res.json).then(res => console.log(res));
+  }
 
   updateShowResults = (numPassengers) => {
     this.setState({
