@@ -547,7 +547,7 @@ class App extends Component {
   };
 
   componentWillMount() {
-  	fetch('stations/').then(res => res.json).then(res => console.log(res));
+  	fetch('https://railroadbackend.appspot.com/stations/').then(res => res.json).then(res => console.log(res));
   }
 
   updateShowResults = (numPassengers) => {
