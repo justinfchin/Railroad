@@ -53,5 +53,5 @@ class TrainsSerializer(serializers.ModelSerializer):
 class TripsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trips
-        fields = ('trip_id', 'trip_date', 'trip_seg_start', 'trip_seg_end', 'fare_type', 'fare', 'trip_train', 'reservation' )
+        fields = ('trip_id', 'trip_date', 'trip_seg_start', 'trip_seg_ends', 'fare_type', 'fare', 'trip_train', 'reservation' )
 

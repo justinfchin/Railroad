@@ -23,12 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'd(^(5ahy#0kghu64p-0un5rqr2r7$%t-b3yut9$a_g8ir@pgcy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-        u'railroadbackend.appspot.com',
-        u'tsering.net',
-        u'www.tsering.net',
+        '*'
         ]
 
 
