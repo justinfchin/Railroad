@@ -530,11 +530,7 @@ class App extends Component {
     super(props);
     this.state = {
       date: moment(),
-      stations: ["Boston, MA - South Station","Boston, MA - Back Bay Station","Route 128, MA","Providence, RI","Kingston, RI",
-        "Westerly,RI","Mystic, CT","New London, CT","Old Saybrook, CT","New Haven, CT","Bridgeport, CT","Stamford, CT",
-        "New Rochelle, NY","New York, NY - Penn Station","Newark, NJ","Newark Liberty Intl. Air., NJ","Metro Park, NJ",
-        "Trenton, NJ","Philadelphia, PA - 30th Street Station","Wilmington, DE - J.R. Biden, Jr. Station","Aberdeen, MD",
-        "Baltimore, MD - Penn Station","BWI Marshall Airport, MD","New Carrollton, MD","Washington, DC - Union Station"],
+      stations: [],
       //numPassengers: 1,
       numPassengers: {
         adults: 0,
@@ -547,7 +543,11 @@ class App extends Component {
   };
 
   componentWillMount() {
-  	fetch('https://railroadbackend.appspot.com/stations/').then(res => res.json).then(res => console.log(res));
+  	fetch('stations/').then(res => res.json()).then(stations => {
+  		this.setState({
+	  		stations: stations.map(s => s.station_name),
+	  	});
+  	});
   }
 
   updateShowResults = (numPassengers) => {
