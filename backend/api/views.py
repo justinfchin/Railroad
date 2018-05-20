@@ -6,6 +6,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
+from django.db import connection
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
@@ -106,11 +107,15 @@ def reservation_detail(request, reservation_id):
 def seats_free_list(request):
     return __grab_list(SeatsFree, SeatsFreeSerializer, request)
 
-def seats_free_detail(request, seats_free_date):
-    """
-    Retrieve, update or delete a seats_free.
-    """
-    return __grab_detail(SeatsFree, SeatsFreeSerializer, request, seats_free_date=seats_free_date)
+def seats_free_detail(request, seat_free_date, train_id, segment_id):
+    return __grab_detail(SeatsFree, SeatsFreeSerializer, request, seat_free_date=seat_free_date)
+
+def seats_free_on_trip(request, seat_free_date, start_station, end_station, train_id):
+    seats_free = None
+    with connection.cursor() as cursor:
+        args = cursor.callproc('calc_seats_free', [start_station, end_station, seat_free_date, train_id, seats_free])
+        seats_free = cursor.fetchall()[0][0]
+    return JsonResponse({'seats_free': seats_free})
 
 
 def segments_list(request):
