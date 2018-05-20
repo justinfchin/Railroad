@@ -170,10 +170,12 @@ class TripInfo extends Component {
   };
 
   handleClick() {
-  	if(this.state.origin != this.state.destination){
+  	if(this.state.origin !== this.state.destination){
 	  	this.props.updateShowResults(false);
 	  	this.props.findAvailableTrips(this.state.date,this.state.origin,this.state.destination);
-	}
+		}else{
+			this.props.updateShowResults(true);
+		}
   };
 
   render() {
@@ -663,6 +665,21 @@ class App extends Component {
     };
   };
 
+/*
+  componentDidUpdate() {
+  	var trips = this.state.availableTrips.sort((a,b) => a.departure_time > b.departure_time);
+  	console.log(trips);
+  	if(this.state.availableTrips != trips){
+  		console.log(trips);
+  		this.setState({
+  			availableTrips: trips,
+  		});
+  	}else{
+  		return;
+  	}
+  }
+*/
+
   componentWillMount() {
 	Promise.all([
       fetch('https://railroadbackend.appspot.com/stations/').then(res => res.json()),
@@ -726,11 +743,11 @@ class App extends Component {
 		if(trip.seats_free > 0){
 			availableTrips.push(trip);
 		}
-	}).then(() => {
-		this.setState({
-			availableTrips: availableTrips,
+		}).then(() => {
+			this.setState({
+				availableTrips: availableTrips,
+			});
 		});
-	});
   }
 
   findAvailableTrips(date,origin,destination) {
@@ -740,8 +757,8 @@ class App extends Component {
 		var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
 		var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
 		for(let i = 1; i <= 28; i++){
-	  		this.loadTrips(date.format("YYYY-MM-DD"),origin,originID,destination,destinationID,i,availableTrips);
-	  	}
+  		this.loadTrips(date.format("YYYY-MM-DD"),origin,originID,destination,destinationID,i,availableTrips);
+  	}
 	}
 	catch(error) {
 		console.error(error);
