@@ -65,16 +65,19 @@ def __grab_detail(the_model, the_serializer, request, **kwargs):
         return HttpResponse(status=204)
 
 
+def spring_memes(request):
+    return HttpResponse("Welcome to Spring Memes")
+
 def fare_types_list(request):
     """List all fare types, or create a new fare_type"""
     return __grab_list(FareTypes, FareTypesSerializer, request)
-
 
 def fare_type_detail(request, fare_id):
     """
     Retrieve, update or delete a fare_type.
     """
     return __grab_detail(FareTypes, FareTypesSerializer, request, fare_id=fare_id)
+
 
 def passengers_list(request):
     """List all passengers, or create a new passenger"""
@@ -86,14 +89,37 @@ def passenger_detail(request, passenger_id):
     """
     return __grab_detail(Passengers, PassengersSerializer, request, passenger_id=passenger_id)
 
-# def reservations_list(request):
-# def reservation_detail(request):
 
-# def seats_free_list(request):
-# def seats_free_detail(request):
+def reservations_list(request):
+    return __grab_list(Reservations, ReservationsSerializer, request)
 
-# def segments_list(request):
-# def segment_detail(request):
+def reservation_detail(request, reservation_id):
+    """
+    Retrieve, update or delete a reservation.
+    """
+    return __grab_detail(Reservations, ReservationsSerializer, request, reservation_id=reservation_id)
+
+
+
+def seats_free_list(request):
+    return __grab_list(SeatsFree, SeatsFreeSerializer, request)
+
+def seats_free_detail(request, seats_free_date):
+    """
+    Retrieve, update or delete a seats_free.
+    """
+    return __grab_detail(SeatsFree, SeatsFreeSerializer, request, seats_free_date=seats_free_date)
+
+
+def segments_list(request):
+    return __grab_list(Segments, SegmentsSerializer, request)
+
+def segment_detail(request, segment_id):
+    """
+    Retrieve, update or delete a segment.
+    """
+    return __grab_detail(Segments, SegmentsSerializer, request, segment_id=segment_id)
+
 
 def stations_list(request):
     return __grab_list(Stations, StationsSerializer, request)
@@ -101,11 +127,32 @@ def stations_list(request):
 def station_detail(request, station_id):
     return __grab_detail(Stations, StationsSerializer, request, station_id=station_id)
 
-# def stops_at_list(request):
-# def stops_at_detail(request):
+def station_detail_by_endpoints(request, station_start, station_end):
+    return __grab_detail(Stations, StationsSerializer, request, station_id=station_id)
 
-# def trains_list(request):
-# def train_detail(request):
 
-# def trips_list(request):
-# def trip_detail(request):
+def stops_at_list(request):
+    return __grab_list(StopsAt, StopsAtSerializer, request)
+
+def stops_at_detail(request, train_id, station_id):
+    return __grab_detail(StopsAt, StopsAtSerializer, request, train_id=train_id, station_id=station_id)
+
+
+def trains_list(request):
+    return __grab_list(Trains, TrainsSerializer, request)
+
+def train_detail(request, train_id):
+    """
+    Retrieve, update or delete a train.
+    """
+    return __grab_detail(Trains, TrainsSerializer, request, train_id=train_id)
+
+
+def trips_list(request):
+    return __grab_list(Trips, TripsSerializer, request)
+
+def trip_detail(request, trip_id):
+    """
+    Retrieve, update or delete a trip.
+    """
+    return __grab_detail(Trips, TripsSerializer, request, trip_id=trip_id)

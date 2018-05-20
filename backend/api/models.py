@@ -107,7 +107,7 @@ class Trips(models.Model):
     trip_id = models.AutoField(primary_key=True)
     trip_date = models.DateField()
     trip_seg_start = models.ForeignKey(Segments, models.DO_NOTHING, db_column='trip_seg_start', related_name='trip_seg_start')
-    trip_seg_end = models.ForeignKey(Segments, models.DO_NOTHING, db_column='trip_seg_end', related_name='trip_seg_end')
+    trip_seg_ends = models.ForeignKey(Segments, models.DO_NOTHING, db_column='trip_seg_ends', related_name='trip_seg_ends')
     fare_type = models.ForeignKey(FareTypes, models.DO_NOTHING, db_column='fare_type')
     fare = models.DecimalField(max_digits=7, decimal_places=2)
     trip_train = models.ForeignKey(Trains, models.DO_NOTHING)
