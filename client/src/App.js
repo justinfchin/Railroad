@@ -6,14 +6,23 @@ import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 class Origin extends Component {
+  constructor(props) {
+  	super(props);
+  	this.handleChange = this.handleChange.bind(this);
+  }
+
   createOptions = (option) => {
     return <option key={option}>{option}</option>;
+  }
+
+  handleChange() {
+  	this.props.updateOrigin(this.refs.origin.value);
   }
 
   render() {
     return (
       <div className="Origin">
-        <select ref="origin" className="input_bar">
+        <select ref="origin" className="input_bar" onChange={this.handleChange}>
           <option>-- Origin Station --</option>
           {this.props.stations.map(this.createOptions)}
         </select>
@@ -23,14 +32,23 @@ class Origin extends Component {
 }
 
 class Destination extends Component {
+  constructor(props) {
+  	super(props);
+  	this.handleChange = this.handleChange.bind(this);
+  }
+
   createOptions = (option) => {
     return <option key={option}>{option}</option>;
+  }
+
+  handleChange() {
+  	this.props.updateDestination(this.refs.destination.value);
   }
 
   render() {
     return (
       <div className="Destination">
-        <select ref="destination" className="input_bar">
+        <select ref="destination" className="input_bar" onChange={this.handleChange}>
           <option>-- Destination Station --</option>
           {this.props.stations.map(this.createOptions)}
         </select>
@@ -108,7 +126,17 @@ class TripInfo extends Component {
     super(props);
     this.state = {
       numPassengers: this.props.numPassengers,
+      date: this.props.date,
+      origin: "",
+      destination: "",
     };
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+  	this.setState({
+  		date: nextProps.date,
+  	});
   }
 
   lessPass = () => {
@@ -129,19 +157,38 @@ class TripInfo extends Component {
     }
   };
 
+  updateOrigin(origin) {
+  	this.setState({
+  		origin: origin,
+  	});
+  };
+
+  updateDestination(destination) {
+  	this.setState({
+  		destination: destination,
+  	});
+  };
+
+  handleClick() {
+  	if(this.state.origin != this.state.destination){
+	  	this.props.updateShowResults(false);
+	  	this.props.findAvailableTrips(this.state.date,this.state.origin,this.state.destination);
+	}
+  };
+
   render() {
     return (
       <div className="Head">
         <div className="TripInfo">
           <Date date={this.props.date} updateDate={(date) => this.props.updateDate(date)}/>
-          <Origin stations={this.props.stations}/>
-          <Destination stations={this.props.stations}/>
+          <Origin stations={this.props.stations} updateOrigin={(origin) => this.updateOrigin(origin)}/>
+          <Destination stations={this.props.stations} updateDestination={(destination) => this.updateDestination(destination)}/>
           {/*<LessPass numPassengers={this.state.numPassengers} lessPass={this.lessPass}/>
           <NumPassengers numPassengers={this.state.numPassengers}/>
           <MorePass numPassengers={this.state.numPassengers} morePass={this.morePass}/>*/}
         </div>
         <div>
-          <button className="submit" onClick={() => this.props.updateShowResults(this.state.numPassengers)}>Check Availability</button>
+          <button className="submit" onClick={this.handleClick}>Check Availability</button>
         </div>
       </div>
     );
@@ -412,7 +459,7 @@ class PassengerSpecs extends Component {
 
 		this.props.updateNumPassengers(0,0,0);
 		this.props.updateConfirmPassCount();
-		this.props.updateShowResults();
+		this.props.updateShowResults(true);
 		this.props.onClose();
 	}
 
@@ -441,6 +488,7 @@ class Results extends Component {
       date: this.props.date,
       confirmPassCount: false,
       display: this.props.showResults,
+      availableTrips: this.props.availableTrips,
     };
   }
 
@@ -448,6 +496,7 @@ class Results extends Component {
     this.setState({
       date: nextProps.date,
       display: nextProps.showResults,
+      availableTrips: nextProps.availableTrips,
     });
   }
 
@@ -473,6 +522,18 @@ class Results extends Component {
   	});
   };
 
+  createTrips = (trip) => {
+  	return (
+  		<tr key={trip.train} className="row" onClick={this.openModal}>
+  			<td>{trip.train}</td>
+	        <td>{trip.departure_time}</td>
+	        <td>{trip.arrival_time}</td>
+	        <td>{trip.seats_free}</td>
+	        <td>{trip.date}</td>
+	    </tr>
+  	);
+  }
+
   render() {
     if(!this.state.display){
       return null;
@@ -484,29 +545,13 @@ class Results extends Component {
           <table className="Results">
             <tbody>
               <tr className="headRow">
+              	<th>Train No.</th>
                 <th>Departure Time</th>
                 <th>Arrival Time</th>
                 <th>Available Seats</th>
                 <th>Date</th>
               </tr>
-              <tr className="row" onClick={this.openModal}>
-                <td>3:45 PM</td>
-                <td>4:45 PM</td>
-                <td>7</td>
-                <td>{this.props.date.format('L')}</td>
-              </tr>
-              <tr className="row" onClick={this.openModal}>
-                <td>4:00 PM</td>
-                <td>5:00 PM</td>
-                <td>12</td>
-                <td>{this.props.date.format('L')}</td>
-              </tr>
-              <tr className="row" onClick={this.openModal}>
-                <td>5:15 PM</td>
-                <td>6:15 PM</td>
-                <td>3</td>
-                <td>{this.props.date.format('L')}</td>
-              </tr>
+              {this.state.availableTrips.map(this.createTrips)}
             </tbody>
           </table>
         </div>
@@ -518,7 +563,7 @@ class Results extends Component {
             					date={this.props.date}/>
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
             				updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
-            				updateShowResults={() => this.props.updateShowResults()} onClose={() => this.closeModal()} date={this.props.date}/>
+            				updateShowResults={(booked) => this.props.updateShowResults(booked)} onClose={() => this.closeModal()} date={this.props.date}/>
         </Modal>
       </div>
     );
@@ -531,6 +576,9 @@ class App extends Component {
     this.state = {
       date: moment(),
       stations: [],
+      trains: [],
+      stops_at: [],
+      availableTrips: [],
       //numPassengers: 1,
       numPassengers: {
         adults: 0,
@@ -538,22 +586,33 @@ class App extends Component {
         children: 0,
       },
       showResults: false,
-      seatsFree: "# seats free"
     };
   };
 
   componentWillMount() {
-  	fetch('stations/').then(res => res.json()).then(stations => {
-  		this.setState({
-	  		stations: stations.map(s => s.station_name),
+	Promise.all([
+      fetch('https://railroadbackend.appspot.com/stations/').then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/trains/').then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/stops_at/').then(res => res.json()),
+    ]).then(([stations, trains, stops_at]) => {
+    	this.setState({
+	  		stations: stations,
+	  		trains: trains,
+	  		stops_at: stops_at,
 	  	});
-  	});
+    });
   }
 
-  updateShowResults = (numPassengers) => {
-    this.setState({
-      showResults: !this.state.showResults,
-    });
+  updateShowResults = (booked) => {
+  	if(booked){
+	    this.setState({
+	      showResults: false,
+	    });
+	}else{
+		this.setState({
+	      showResults: true,
+	    });
+	}
     /*if(numPassengers > 0){
       this.setState({
         showResults: true,
@@ -579,16 +638,56 @@ class App extends Component {
     });
   };
 
+  loadTrips = (date,origin,originID,destination,destinationID,trainID,availableTrips) => {
+  	var trip = {};
+  	fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + trainID).then(res => res.json()).then(res => {
+		trip.date = date;
+		trip.departure_time = this.state.stops_at.find(s => s.train === trainID && s.station === originID).time_out;
+		trip.arrival_time = this.state.stops_at.find(s => s.train === trainID && s.station === destinationID).time_in;
+		trip.origin = origin;
+		trip.destination = destination;
+		trip.seats_free = res.seats_free;
+		trip.train = trainID;
+		if(trip.seats_free > 0){
+			availableTrips.push(trip);
+		}
+	}).then(() => {
+		this.setState({
+			availableTrips: availableTrips,
+		});
+	});
+  }
+
+  findAvailableTrips(date,origin,destination) {
+  	var availableTrips = [];
+
+  	try {
+		var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
+		var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
+		for(let i = 1; i <= 28; i++){
+	  		this.loadTrips(date.format("YYYY-MM-DD"),origin,originID,destination,destinationID,i,availableTrips);
+	  	}
+	}
+	catch(error) {
+		console.error(error);
+	}
+
+  	//var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
+  	//var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
+  }
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <img src={banner}  alt="" className="Banner"/>
         </header>
-        <TripInfo date={this.state.date} updateDate={(date) => this.updateDate(date)} stations={this.state.stations} numPassengers={this.state.numPassengers} 
-        			updateShowResults={(numPassengers) => this.updateShowResults(numPassengers)}/>
-        <Results showResults={this.state.showResults} updateShowResults={(numPassengers) => this.updateShowResults(numPassengers)} seatsFree={this.state.seatsFree} date={this.state.date} 
-        numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children) => this.updateNumPassengers(adults,seniors,children)}/>
+        <TripInfo date={this.state.date} updateDate={(date) => this.updateDate(date)} stations={this.state.stations.map(s => s.station_name)} numPassengers={this.state.numPassengers} 
+        			updateShowResults={(booked) => this.updateShowResults(booked)}
+        			findAvailableTrips={(date,origin,destination) => this.findAvailableTrips(date,origin,destination)}/>
+        <Results showResults={this.state.showResults} updateShowResults={(booked) => this.updateShowResults(booked)} date={this.state.date} 
+        			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children) => this.updateNumPassengers(adults,seniors,children)}
+        			availableTrips={this.state.availableTrips}/>
       </div>
     );
   }
