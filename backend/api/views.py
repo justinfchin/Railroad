@@ -5,9 +5,10 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
+from django.template import loader
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+
 from .models import FareTypes
 from .models import Passengers
 from .models import Reservations
@@ -66,7 +67,8 @@ def __grab_detail(the_model, the_serializer, request, **kwargs):
 
 
 def spring_memes(request):
-    return HttpResponse("Welcome to Spring Memes")
+    temp = loader.get_template("index.html")
+    return HttpResponse(temp.render())
 
 def fare_types_list(request):
     """List all fare types, or create a new fare_type"""

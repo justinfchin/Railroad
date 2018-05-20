@@ -11,34 +11,6 @@ from .models import StopsAt
 from .models import Trains
 from .models import Trips
 
-# fare_types/                             : returns all the contents of the fare_types table.
-# fare_types/<fare_id>/                   : returns tuple matching <fare_id>
-#
-# passengers/                             : returns all the contents of the passengers table.
-# passengers/<passenger_id>/              : returns tuple matching <passenger_id>
-#
-# reservations/                           : returns all the contents of the reservations table.
-# reservations/<reservation_id>/          : returns tuple matching <reservation_id>
-#
-# seats_free/                             : returns all the contents of the seats_free table.
-# seats_free/<seat_free_date>/            : returns tuple matching <seat_free_date>
-#
-# segments/                               : returns all the contents of the segments table.
-# segments/<segment_id>/                  : returns tuple matching <segment_id>
-#
-# stations/                               : returns all the contents of the stations table.
-# stations/<station_id>/                  : returns tuple matching <station_id>
-# stations/<station_start>/<station_end>/ : returns tuple matching <station_start> and <station_end>
-#
-# stops_at/                               : returns all the contents of the stops_at table.
-# stops_at/<train_id>/<station_id>/       : returns tuple matching <train_id> and <station_id>
-#
-# trains/                                 : returns all the contents of the trains table.
-# trains/<train_id>/                      : returns tuple matching <train_id>
-#
-# trips/                                  : returns all the contents of the trips table.
-# trips/<trip_id>/                        : returns tuple matching <trip_id>
-
 urlpatterns = [
     url(r'^$', views.spring_memes),
     url(r'^fare_types/$', views.fare_types_list),
