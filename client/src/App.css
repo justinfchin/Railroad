@@ -175,7 +175,7 @@ th {
   display: flex;
 }
 
-.NumAdults, .NumSeniors, .NumChildren {
+.NumAdults, .NumSeniors, .NumChildren, .NumPets {
   margin-top: 0.5em;
   height: 100%;
   box-sizing: border-box;

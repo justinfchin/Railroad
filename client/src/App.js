@@ -277,6 +277,16 @@ class NumChildren extends Component {
   }
 }
 
+class NumPets extends Component {
+  render() {
+    return (
+      <div className="NumPets">
+        <input className="pass_input" value={this.props.numPets} type="input_bar"/>
+      </div>
+    );
+  }
+}
+
 class ReservationSpecs extends Component {
 	constructor(props) {
 		super(props);
@@ -296,12 +306,13 @@ class ReservationSpecs extends Component {
     var currAdultsCount = prevAdultsCount-1;
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(currAdultsCount <= 0 && prevSeniorsCount <= 0 && prevChildrenCount > 0){
       alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
       return;
     }
     if(prevAdultsCount > 0){
-      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }
   };
 
@@ -310,8 +321,9 @@ class ReservationSpecs extends Component {
     var currAdultsCount = prevAdultsCount+1;
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
-      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }else{
       alert("For parties of 9 or more, email for booking.");
     }
@@ -322,12 +334,13 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var currSeniorsCount = prevSeniorsCount-1;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(currSeniorsCount <= 0 && prevAdultsCount <= 0 && prevChildrenCount > 0){
       alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
       return;
     }
     if(prevSeniorsCount > 0){
-      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount,prevPetsCount);
     }
   };
 
@@ -336,8 +349,9 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var currSeniorsCount = prevSeniorsCount+1;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
-      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount,prevPetsCount);
     }else{
       alert("For parties of 9 or more, email for booking.");
     }
@@ -348,8 +362,9 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
     var currChildrenCount = prevChildrenCount-1;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevChildrenCount > 0){
-      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount,prevPetsCount);
     }
   };
 
@@ -358,13 +373,42 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
     var currChildrenCount = prevChildrenCount+1;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount === 0 && prevSeniorsCount === 0){
       alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
       return;
     }else if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
-      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount,prevPetsCount);
     }else{
       alert("For parties of 9 or more, email for booking.");
+    }
+  };
+
+  lessPets = () => {
+  	var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
+    var currPetsCount = prevPetsCount-1;
+    if(prevPetsCount > 0){
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,prevChildrenCount,currPetsCount);
+    }
+  };
+
+  morePets = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
+    var currPetsCount = prevPetsCount+1;
+    console.log(prevPetsCount,currPetsCount);
+    if(prevAdultsCount === 0 && prevSeniorsCount === 0){
+      alert("There must be at least 1 adult or 1 senior to add a pet.");
+      return;
+    }else if(prevPetsCount < 2){
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,prevChildrenCount,currPetsCount);
+    }else{
+      alert("Cannot bring more than 2 pets.");
     }
   };
 
@@ -394,7 +438,7 @@ class ReservationSpecs extends Component {
           </div>
           <div className="PassengerDescription">
             <div className="PassengerType">Adults</div>
-            <div className="PassengerAge">13-64</div>
+            <div className="PassengerAge">(Ages 13-64)</div>
           </div>
           <div className="NumPassType">
             <LessPass lessPass={this.lessSeniors}/>
@@ -403,7 +447,7 @@ class ReservationSpecs extends Component {
           </div>
           <div className="PassengerDescription">
             <div className="PassengerType">Seniors</div>
-            <div className="PassengerAge">65+</div>
+            <div className="PassengerAge">(Ages 65+)</div>
           </div>
           <div className="NumPassType">
             <LessPass lessPass={this.lessChildren}/>
@@ -412,11 +456,20 @@ class ReservationSpecs extends Component {
           </div>
           <div className="PassengerDescription">
             <div className="PassengerType">Children</div>
-            <div className="PassengerAge">2-12</div>
+            <div className="PassengerAge">(Ages 2-12)</div>
+          </div>
+          <div className="NumPassType">
+            <LessPass lessPass={this.lessPets}/>
+              <NumPets numPets={this.props.numPassengers.pets}/>
+            <MorePass morePass={this.morePets}/>
+          </div>
+          <div className="PassengerDescription">
+            <div className="PassengerType">Pets</div>
+            <div className="PassengerAge">(limit 2)</div>
           </div>
         </div>
         <div className="fareBook">
-	        <text className="fare">{"Total: $" + 20}</text>
+	        <text className="fare">{"--dynamic fare calculated here--"}</text>
 	        <button className="bookTrip" onClick={() => this.handleClick()}>Continue</button>
 	    </div>
       </div>
@@ -457,7 +510,7 @@ class PassengerSpecs extends Component {
 	      }),
 	    });
 
-		this.props.updateNumPassengers(0,0,0);
+		this.props.updateNumPassengers(0,0,0,0);
 		this.props.updateConfirmPassCount();
 		this.props.updateShowResults(true);
 		this.props.onClose();
@@ -559,10 +612,10 @@ class Results extends Component {
         		confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()}
         		updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)}>
             <ReservationSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} 
-            					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
+            					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             					date={this.props.date}/>
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
-            				updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
+            				updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             				updateShowResults={(booked) => this.props.updateShowResults(booked)} onClose={() => this.closeModal()} date={this.props.date}/>
         </Modal>
       </div>
@@ -584,6 +637,7 @@ class App extends Component {
         adults: 0,
         seniors: 0,
         children: 0,
+        pets: 0,
       },
       showResults: false,
     };
@@ -628,12 +682,13 @@ class App extends Component {
     });
   };
 
-  updateNumPassengers = (newAdults,newSeniors,newChildren) => {
+  updateNumPassengers = (newAdults,newSeniors,newChildren,newPets) => {
     this.setState({
       numPassengers: {
         adults: newAdults,
         seniors: newSeniors,
         children: newChildren,
+        pets: newPets,
       }
     });
   };
@@ -686,7 +741,7 @@ class App extends Component {
         			updateShowResults={(booked) => this.updateShowResults(booked)}
         			findAvailableTrips={(date,origin,destination) => this.findAvailableTrips(date,origin,destination)}/>
         <Results showResults={this.state.showResults} updateShowResults={(booked) => this.updateShowResults(booked)} date={this.state.date} 
-        			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children) => this.updateNumPassengers(adults,seniors,children)}
+        			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.updateNumPassengers(adults,seniors,children,pets)}
         			availableTrips={this.state.availableTrips}/>
       </div>
     );
