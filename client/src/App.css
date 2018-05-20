@@ -181,6 +181,11 @@ th {
   box-sizing: border-box;
 }
 
+.Military {
+  float: left;
+  margin-top: 1em;
+}
+
 .NumPassType {
   margin-right: 0.5em;
   display: flex;

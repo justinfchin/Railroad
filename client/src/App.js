@@ -281,10 +281,29 @@ class NumPets extends Component {
   render() {
     return (
       <div className="NumPets">
-        <input className="pass_input" value={this.props.numPets} type="input_bar"/>
+      	<input className="pass_input" value={this.props.numPets} type="input_bar"/>
       </div>
     );
   }
+}
+
+class Military extends Component {
+	createOptions() {
+		return (
+			<div>
+				Military?
+				<input type="checkbox"/>
+			</div>
+		);
+	}
+
+	render() {
+		return (
+			<div className="Military">
+			{this.props.numMilitary.map(this.createOptions)}
+			</div>
+		);
+	}
 }
 
 class ReservationSpecs extends Component {
@@ -468,6 +487,7 @@ class ReservationSpecs extends Component {
             <div className="PassengerAge">(limit 2)</div>
           </div>
         </div>
+        <Military numMilitary={new Array(this.props.numPassengers.adults).fill(true)}/>
         <div className="fareBook">
 	        <text className="fare">{"--dynamic fare calculated here--"}</text>
 	        <button className="bookTrip" onClick={() => this.handleClick()}>Continue</button>
