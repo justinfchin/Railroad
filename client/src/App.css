@@ -23,6 +23,86 @@
   width: 100%;
 }
 
+@media only screen and (max-width: 768px) {
+    .input_bar {
+      height: 2em;
+      width: 90%;
+      font-size: 0.7em;
+      text-align-last: center;
+    }
+    
+    .Date {
+      margin-top: 0.5em;
+      margin-left: 0.25em;
+      margin-right: 2em;
+      height: 1.5em;
+      width: 90%;
+      font-size: 0.7em;
+      text-align: center;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+    }
+
+    .submit {
+      margin-top: 1em;
+      font-size: 0.7em;
+      padding: 0.5em;
+    }
+
+    .TripInfo {
+      display: block;
+    }
+
+    .Trips {
+      width: 100%;
+    }
+
+    td, th {
+      outline: solid;
+      font-size: 0.7em;
+      outline-color: #000000;
+      padding: 0.5em;
+      white-space: nowrap;
+    }
+
+    .modalPopup {
+      width: 50%;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .input_bar {
+      height: 1.8em;
+      font-size: 1.5em;
+      text-align-last: center;
+    }
+
+    .Date {
+      margin-top: 0.35em;
+      margin-left: 0.25em;
+      height: 1.5em;
+      font-size: 1.5em;
+      text-align: center;
+    }
+
+    .submit {
+      margin-top: 1em;
+      font-size: 1em;
+      padding: 0.5em;
+    }
+
+    td, th {
+      outline: solid;
+      font-size: 1.3em;
+      outline-color: #000000;
+      padding: 0.5em;
+      white-space: nowrap;
+    }
+}
+
 .Head {
   display: block;
   background-color: #226D77;
@@ -46,20 +126,6 @@
   padding-right: 0;
 }
 
-.Date {
-  margin-top: 0.35em;
-  margin-left: 0.25em;
-  height: 1.5em;
-  font-size: 1.5em;
-  text-align: center;
-}
-
-.input_bar {
-  height: 1.8em;
-  font-size: 1.5em;
-  text-align-last: center;
-}
-
 .pass_input {
   height: 100%;
   width: 1.5em;
@@ -67,7 +133,7 @@
   text-align: center;
   margin-right: -0.35em;
   margin-left: -0.35em;
-  margin-top: -0.35em;
+  margin-top: -0.30em;
   color: transparent;
   text-shadow: 0 0 0 black;
   box-sizing: border-box;
@@ -107,12 +173,6 @@
   margin-left: 0.2em;
 }
 
-.submit {
-  margin-top: 1em;
-  font-size: 1em;
-  padding: 0.5em;
-}
-
 .Body {
   display: block;
   height: 8em;
@@ -138,13 +198,7 @@ tr {
   -ms-user-select: none;
 }
 
-td, th {
-  outline: solid;
-  font-size: 1.3em;
-  outline-color: #000000;
-  padding: 0.5em;
-  white-space: nowrap;
-}
+
 
 tbody {
   outline: solid;
@@ -154,12 +208,12 @@ th {
   background-color: #15D388;
 }
 
-.row {
+.tripRow {
   background-color: #B8DEEA;
   cursor: pointer;
 }
 
-.row:hover {
+.tripRow:hover {
   background-color: yellow;
 }
 

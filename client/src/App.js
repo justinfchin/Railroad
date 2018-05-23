@@ -203,7 +203,7 @@ class Modal extends React.Component {
       return null
 
     let modalStyle = {
-      position: 'absolute',
+      position: 'fixed',
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
@@ -213,7 +213,7 @@ class Modal extends React.Component {
     }
 
     let backdropStyle = {
-      position: 'absolute',
+      position: 'fixed',
       width: '100%',
       height: '100%',
       top: '0px',
@@ -224,7 +224,7 @@ class Modal extends React.Component {
 
     return (
       <div>
-        <div style={modalStyle}>
+        <div style={modalStyle} className="modalPopup">
 	        <button className="x" onClick={e => this.close(e)}>
 	            X
 	        </button>
@@ -238,7 +238,7 @@ class Modal extends React.Component {
   close(e) {
     e.preventDefault()
 
-    this.props.updateNumPassengers(0,0,0);
+    this.props.updateNumPassengers(0,0,0,0);
     if(this.props.confirmPassCount){
     	this.props.updateConfirmPassCount();
     }
@@ -599,7 +599,7 @@ class Results extends Component {
 
   createTrips = (trip) => {
   	return (
-  		<tr key={trip.train} className="row" onClick={this.openModal}>
+  		<tr key={trip.train} className="tripRow" onClick={this.openModal}>
   			<td>{trip.train}</td>
 	        <td>{trip.departure_time}</td>
 	        <td>{trip.arrival_time}</td>
@@ -632,7 +632,7 @@ class Results extends Component {
         </div>
         <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()} 
         		confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()}
-        		updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)}>
+        		updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)}>
             <ReservationSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} 
             					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             					date={this.props.date}/>
