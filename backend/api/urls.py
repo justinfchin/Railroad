@@ -11,34 +11,6 @@ from .models import StopsAt
 from .models import Trains
 from .models import Trips
 
-# fare_types/                             : returns all the contents of the fare_types table.
-# fare_types/<fare_id>/                   : returns tuple matching <fare_id>
-#
-# passengers/                             : returns all the contents of the passengers table.
-# passengers/<passenger_id>/              : returns tuple matching <passenger_id>
-#
-# reservations/                           : returns all the contents of the reservations table.
-# reservations/<reservation_id>/          : returns tuple matching <reservation_id>
-#
-# seats_free/                             : returns all the contents of the seats_free table.
-# seats_free/<seat_free_date>/            : returns tuple matching <seat_free_date>
-#
-# segments/                               : returns all the contents of the segments table.
-# segments/<segment_id>/                  : returns tuple matching <segment_id>
-#
-# stations/                               : returns all the contents of the stations table.
-# stations/<station_id>/                  : returns tuple matching <station_id>
-# stations/<station_start>/<station_end>/ : returns tuple matching <station_start> and <station_end>
-#
-# stops_at/                               : returns all the contents of the stops_at table.
-# stops_at/<train_id>/<station_id>/       : returns tuple matching <train_id> and <station_id>
-#
-# trains/                                 : returns all the contents of the trains table.
-# trains/<train_id>/                      : returns tuple matching <train_id>
-#
-# trips/                                  : returns all the contents of the trips table.
-# trips/<trip_id>/                        : returns tuple matching <trip_id>
-
 urlpatterns = [
     url(r'^$', views.spring_memes),
     url(r'^fare_types/$', views.fare_types_list),
@@ -51,7 +23,8 @@ urlpatterns = [
     url(r'^reservations/(?P<reservation_id>[0-9]+)/$', views.reservation_detail),
     
     url(r'^seats_free/$', views.seats_free_list),
-    url(r'^seats_free/(?P<seat_free_date>[0-9]+)/$', views.seats_free_detail),
+    url(r'^seats_free/(?P<seat_free_date>[\d\-]+)/(?P<train_id>[\d\-]+)/(?P<segment_id>[\d\-]+)/$', views.seats_free_detail),
+    url(r'^seats_free/(?P<seat_free_date>[\d\-]+)/(?P<start_station>[\d\-]+)/(?P<end_station>[\d\-]+)/(?P<train_id>[\d\-]+)/$', views.seats_free_on_trip),
     
     url(r'^segments/$', views.segments_list),
     url(r'^segments/(?P<segment_id>[0-9]+)/$', views.segment_detail),
@@ -70,3 +43,31 @@ urlpatterns = [
     url(r'^trips/(?P<trip_id>[0-9]+)/$', views.trip_detail),
 ]
 
+# fare_types/                             
+# fare_types/<fare_id>/                   
+#                                                                                                                    
+# passengers/                             
+# passengers/<passenger_id>/              
+#                                                                                                                    
+# reservations/                           
+# reservations/<reservation_id>/          
+#                                                                                                                    
+# seats_free/                             
+# seats_free/<seat_free_date>/<train_id>/<segment_id>/ 
+# seats_free/<seat_free_date>/<start_station>/<end_station>/<train_id>/                                 
+#
+# segments/                               
+# segments/<segment_id>/                  
+#                                                                                                                    
+# stations/                               
+# stations/<station_id>/                  
+# stations/<station_start>/<station_end>/ 
+#                                                                                                                    
+# stops_at/                               
+# stops_at/<train_id>/<station_id>/       
+#                                                                                                                    
+# trains/                                 
+# trains/<train_id>/                      
+#                                                                                                                    
+# trips/                                  
+# trips/<trip_id>/                        
