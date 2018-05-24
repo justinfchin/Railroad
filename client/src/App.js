@@ -288,11 +288,24 @@ class NumPets extends Component {
 }
 
 class Military extends Component {
-	createOptions() {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    if(event.target.checked){
+      this.props.updateNumMilitary(1);
+    }else{
+      this.props.updateNumMilitary(-1);
+    }
+  };
+
+	createOptions(numMilitary) {
 		return (
 			<div>
 				Military?
-				<input type="checkbox"/>
+				<input ref={numMilitary} key={numMilitary} type="checkbox" onChange={event => this.handleChange(event)}/>
 			</div>
 		);
 	}
@@ -300,7 +313,7 @@ class Military extends Component {
 	render() {
 		return (
 			<div className="Military">
-			{this.props.numMilitary.map(this.createOptions)}
+			{this.props.inMilitary.map((currOption, index) => this.createOptions(index+1))}
 			</div>
 		);
 	}
@@ -487,7 +500,8 @@ class ReservationSpecs extends Component {
             <div className="PassengerAge">(limit 2)</div>
           </div>
         </div>
-        <Military numMilitary={new Array(this.props.numPassengers.adults).fill(true)}/>
+        <Military inMilitary={new Array(this.props.numPassengers.adults).fill(true)} numMilitary={this.props.numMilitary}
+                  updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}/>
         <div className="fareBook">
 	        <text className="fare">{"--dynamic fare calculated here--"}</text>
 	        <button className="bookTrip" onClick={() => this.handleClick()}>Continue</button>
@@ -633,7 +647,7 @@ class Results extends Component {
         		updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)}>
             <ReservationSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} 
             					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
-            					date={this.props.date}/>
+            					date={this.props.date} numMilitary={this.props.numMilitary} updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}/>
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
             				updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             				updateShowResults={(booked) => this.props.updateShowResults(booked)} onClose={() => this.closeModal()} date={this.props.date}/>
@@ -659,6 +673,7 @@ class App extends Component {
         children: 0,
         pets: 0,
       },
+      numMilitary: 0,
       showResults: false,
     };
   };
@@ -728,6 +743,13 @@ class App extends Component {
     });
   };
 
+  updateNumMilitary = (numMilitary) => {
+    var nextNumMilitary = this.state.numMilitary + numMilitary;
+    this.setState({
+      numMilitary: nextNumMilitary,
+    });
+  };
+
   loadTrips = (date,origin,originID,destination,destinationID,trainID,availableTrips) => {
   	var trip = {};
   	fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + trainID).then(res => res.json()).then(res => {
@@ -777,7 +799,7 @@ class App extends Component {
         			findAvailableTrips={(date,origin,destination) => this.findAvailableTrips(date,origin,destination)}/>
         <Results showResults={this.state.showResults} updateShowResults={(booked) => this.updateShowResults(booked)} date={this.state.date} 
         			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.updateNumPassengers(adults,seniors,children,pets)}
-        			availableTrips={this.state.availableTrips}/>
+        			availableTrips={this.state.availableTrips} numMilitary={this.state.numMilitary} updateNumMilitary={(numMilitary) => this.updateNumMilitary(numMilitary)}/>
       </div>
     );
   }
