@@ -70,6 +70,11 @@
 
     .modalPopup {
       width: 50%;
+      position: fixed;
+    }
+
+    .modalBackground {
+      position: fixed;
     }
 }
 
@@ -100,6 +105,14 @@
       outline-color: #000000;
       padding: 0.5em;
       white-space: nowrap;
+    }
+
+    .modalPopup {
+      position: fixed;
+    }
+
+    .modalBackground {
+      position: fixed;
     }
 }
 
@@ -297,11 +310,11 @@ th {
 .x {
   position: relative;
   float: right;
-  background: transparent;
-  color: white;
+  background: #CDD9D4;
+  color: black;
   font-size: 1em;
   border-radius: 100em;
-  border: solid;
+  border: solid black;
   margin-right: 0.5em;
   margin-top: 0.5em;
   cursor: pointer;

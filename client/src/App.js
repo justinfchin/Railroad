@@ -203,7 +203,6 @@ class Modal extends React.Component {
       return null
 
     let modalStyle = {
-      position: 'fixed',
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
@@ -213,7 +212,6 @@ class Modal extends React.Component {
     }
 
     let backdropStyle = {
-      position: 'fixed',
       width: '100%',
       height: '100%',
       top: '0px',
@@ -230,7 +228,7 @@ class Modal extends React.Component {
 	        </button>
 	        {this.props.children}
         </div>
-        <div style={backdropStyle} /*onClick={e => this.close(e)}*//>
+        <div style={backdropStyle} className="modalBackground" /*onClick={e => this.close(e)}*//>
       </div>
     )
   }
