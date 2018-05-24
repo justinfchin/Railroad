@@ -6,14 +6,23 @@ import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 class Origin extends Component {
+  constructor(props) {
+  	super(props);
+  	this.handleChange = this.handleChange.bind(this);
+  }
+
   createOptions = (option) => {
     return <option key={option}>{option}</option>;
+  }
+
+  handleChange() {
+  	this.props.updateOrigin(this.refs.origin.value);
   }
 
   render() {
     return (
       <div className="Origin">
-        <select ref="origin" className="input_bar">
+        <select ref="origin" className="input_bar" onChange={this.handleChange}>
           <option>-- Origin Station --</option>
           {this.props.stations.map(this.createOptions)}
         </select>
@@ -23,14 +32,23 @@ class Origin extends Component {
 }
 
 class Destination extends Component {
+  constructor(props) {
+  	super(props);
+  	this.handleChange = this.handleChange.bind(this);
+  }
+
   createOptions = (option) => {
     return <option key={option}>{option}</option>;
+  }
+
+  handleChange() {
+  	this.props.updateDestination(this.refs.destination.value);
   }
 
   render() {
     return (
       <div className="Destination">
-        <select ref="destination" className="input_bar">
+        <select ref="destination" className="input_bar" onChange={this.handleChange}>
           <option>-- Destination Station --</option>
           {this.props.stations.map(this.createOptions)}
         </select>
@@ -108,7 +126,17 @@ class TripInfo extends Component {
     super(props);
     this.state = {
       numPassengers: this.props.numPassengers,
+      date: this.props.date,
+      origin: "",
+      destination: "",
     };
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+  	this.setState({
+  		date: nextProps.date,
+  	});
   }
 
   lessPass = () => {
@@ -129,19 +157,40 @@ class TripInfo extends Component {
     }
   };
 
+  updateOrigin(origin) {
+  	this.setState({
+  		origin: origin,
+  	});
+  };
+
+  updateDestination(destination) {
+  	this.setState({
+  		destination: destination,
+  	});
+  };
+
+  handleClick() {
+  	if(this.state.origin !== this.state.destination){
+	  	this.props.updateShowResults(false);
+	  	this.props.findAvailableTrips(this.state.date,this.state.origin,this.state.destination);
+		}else{
+			this.props.updateShowResults(true);
+		}
+  };
+
   render() {
     return (
       <div className="Head">
         <div className="TripInfo">
           <Date date={this.props.date} updateDate={(date) => this.props.updateDate(date)}/>
-          <Origin stations={this.props.stations}/>
-          <Destination stations={this.props.stations}/>
+          <Origin stations={this.props.stations} updateOrigin={(origin) => this.updateOrigin(origin)}/>
+          <Destination stations={this.props.stations} updateDestination={(destination) => this.updateDestination(destination)}/>
           {/*<LessPass numPassengers={this.state.numPassengers} lessPass={this.lessPass}/>
           <NumPassengers numPassengers={this.state.numPassengers}/>
           <MorePass numPassengers={this.state.numPassengers} morePass={this.morePass}/>*/}
         </div>
         <div>
-          <button className="submit" onClick={() => this.props.updateShowResults(this.state.numPassengers)}>Check Availability</button>
+          <button className="submit" onClick={this.handleClick}>Check Availability</button>
         </div>
       </div>
     );
@@ -154,7 +203,6 @@ class Modal extends React.Component {
       return null
 
     let modalStyle = {
-      position: 'absolute',
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
@@ -164,7 +212,6 @@ class Modal extends React.Component {
     }
 
     let backdropStyle = {
-      position: 'absolute',
       width: '100%',
       height: '100%',
       top: '0px',
@@ -175,13 +222,13 @@ class Modal extends React.Component {
 
     return (
       <div>
-        <div style={modalStyle}>
+        <div style={modalStyle} className="modalPopup">
 	        <button className="x" onClick={e => this.close(e)}>
 	            X
 	        </button>
 	        {this.props.children}
         </div>
-        <div style={backdropStyle} /*onClick={e => this.close(e)}*//>
+        <div style={backdropStyle} className="modalBackground" /*onClick={e => this.close(e)}*//>
       </div>
     )
   }
@@ -189,7 +236,7 @@ class Modal extends React.Component {
   close(e) {
     e.preventDefault()
 
-    this.props.updateNumPassengers(0,0,0);
+    this.props.updateNumPassengers(0,0,0,0);
     if(this.props.confirmPassCount){
     	this.props.updateConfirmPassCount();
     }
@@ -230,6 +277,48 @@ class NumChildren extends Component {
   }
 }
 
+class NumPets extends Component {
+  render() {
+    return (
+      <div className="NumPets">
+      	<input className="pass_input" value={this.props.numPets} type="input_bar"/>
+      </div>
+    );
+  }
+}
+
+class Military extends Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    if(event.target.checked){
+      this.props.updateNumMilitary(1);
+    }else{
+      this.props.updateNumMilitary(-1);
+    }
+  };
+
+	createOptions(numMilitary) {
+		return (
+			<div>
+				Military?
+				<input ref={numMilitary} key={numMilitary} type="checkbox" onChange={event => this.handleChange(event)}/>
+			</div>
+		);
+	}
+
+	render() {
+		return (
+			<div className="Military">
+			{this.props.inMilitary.map((currOption, index) => this.createOptions(index+1))}
+			</div>
+		);
+	}
+}
+
 class ReservationSpecs extends Component {
 	constructor(props) {
 		super(props);
@@ -249,12 +338,13 @@ class ReservationSpecs extends Component {
     var currAdultsCount = prevAdultsCount-1;
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(currAdultsCount <= 0 && prevSeniorsCount <= 0 && prevChildrenCount > 0){
       alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
       return;
     }
     if(prevAdultsCount > 0){
-      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }
   };
 
@@ -263,8 +353,9 @@ class ReservationSpecs extends Component {
     var currAdultsCount = prevAdultsCount+1;
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
-      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }else{
       alert("For parties of 9 or more, email for booking.");
     }
@@ -275,12 +366,13 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var currSeniorsCount = prevSeniorsCount-1;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(currSeniorsCount <= 0 && prevAdultsCount <= 0 && prevChildrenCount > 0){
       alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
       return;
     }
     if(prevSeniorsCount > 0){
-      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount,prevPetsCount);
     }
   };
 
@@ -289,8 +381,9 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var currSeniorsCount = prevSeniorsCount+1;
     var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
-      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount,prevPetsCount);
     }else{
       alert("For parties of 9 or more, email for booking.");
     }
@@ -301,8 +394,9 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
     var currChildrenCount = prevChildrenCount-1;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevChildrenCount > 0){
-      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount,prevPetsCount);
     }
   };
 
@@ -311,13 +405,42 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
     var currChildrenCount = prevChildrenCount+1;
+    var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount === 0 && prevSeniorsCount === 0){
       alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
       return;
     }else if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
-      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount);
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount,prevPetsCount);
     }else{
       alert("For parties of 9 or more, email for booking.");
+    }
+  };
+
+  lessPets = () => {
+  	var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
+    var currPetsCount = prevPetsCount-1;
+    if(prevPetsCount > 0){
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,prevChildrenCount,currPetsCount);
+    }
+  };
+
+  morePets = () => {
+    var prevAdultsCount = this.props.numPassengers.adults;
+    var prevSeniorsCount = this.props.numPassengers.seniors;
+    var prevChildrenCount = this.props.numPassengers.children;
+    var prevPetsCount = this.props.numPassengers.pets;
+    var currPetsCount = prevPetsCount+1;
+    console.log(prevPetsCount,currPetsCount);
+    if(prevAdultsCount === 0 && prevSeniorsCount === 0){
+      alert("There must be at least 1 adult or 1 senior to add a pet.");
+      return;
+    }else if(prevPetsCount < 2){
+      this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,prevChildrenCount,currPetsCount);
+    }else{
+      alert("Cannot bring more than 2 pets.");
     }
   };
 
@@ -347,7 +470,7 @@ class ReservationSpecs extends Component {
           </div>
           <div className="PassengerDescription">
             <div className="PassengerType">Adults</div>
-            <div className="PassengerAge">13-64</div>
+            <div className="PassengerAge">(Ages 13-64)</div>
           </div>
           <div className="NumPassType">
             <LessPass lessPass={this.lessSeniors}/>
@@ -356,7 +479,7 @@ class ReservationSpecs extends Component {
           </div>
           <div className="PassengerDescription">
             <div className="PassengerType">Seniors</div>
-            <div className="PassengerAge">65+</div>
+            <div className="PassengerAge">(Ages 65+)</div>
           </div>
           <div className="NumPassType">
             <LessPass lessPass={this.lessChildren}/>
@@ -365,11 +488,22 @@ class ReservationSpecs extends Component {
           </div>
           <div className="PassengerDescription">
             <div className="PassengerType">Children</div>
-            <div className="PassengerAge">2-12</div>
+            <div className="PassengerAge">(Ages 2-12)</div>
+          </div>
+          <div className="NumPassType">
+            <LessPass lessPass={this.lessPets}/>
+              <NumPets numPets={this.props.numPassengers.pets}/>
+            <MorePass morePass={this.morePets}/>
+          </div>
+          <div className="PassengerDescription">
+            <div className="PassengerType">Pets</div>
+            <div className="PassengerAge">(limit 2)</div>
           </div>
         </div>
+        <Military inMilitary={new Array(this.props.numPassengers.adults).fill(true)} numMilitary={this.props.numMilitary}
+                  updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}/>
         <div className="fareBook">
-	        <text className="fare">{"Total: $" + 20}</text>
+	        <text className="fare">{"--dynamic fare calculated here--"}</text>
 	        <button className="bookTrip" onClick={() => this.handleClick()}>Continue</button>
 	    </div>
       </div>
@@ -410,9 +544,9 @@ class PassengerSpecs extends Component {
 	      }),
 	    });
 
-		this.props.updateNumPassengers(0,0,0);
+		this.props.updateNumPassengers(0,0,0,0);
 		this.props.updateConfirmPassCount();
-		this.props.updateShowResults();
+		this.props.updateShowResults(true);
 		this.props.onClose();
 	}
 
@@ -441,6 +575,7 @@ class Results extends Component {
       date: this.props.date,
       confirmPassCount: false,
       display: this.props.showResults,
+      availableTrips: this.props.availableTrips,
     };
   }
 
@@ -448,6 +583,7 @@ class Results extends Component {
     this.setState({
       date: nextProps.date,
       display: nextProps.showResults,
+      availableTrips: nextProps.availableTrips,
     });
   }
 
@@ -473,6 +609,18 @@ class Results extends Component {
   	});
   };
 
+  createTrips = (trip) => {
+  	return (
+  		<tr key={trip.train} className="tripRow" onClick={this.openModal}>
+  			<td>{trip.train}</td>
+	        <td>{trip.departure_time}</td>
+	        <td>{trip.arrival_time}</td>
+	        <td>{trip.seats_free}</td>
+	        <td>{trip.date}</td>
+	    </tr>
+  	);
+  }
+
   render() {
     if(!this.state.display){
       return null;
@@ -484,41 +632,25 @@ class Results extends Component {
           <table className="Results">
             <tbody>
               <tr className="headRow">
+              	<th>Train No.</th>
                 <th>Departure Time</th>
                 <th>Arrival Time</th>
                 <th>Available Seats</th>
                 <th>Date</th>
               </tr>
-              <tr className="row" onClick={this.openModal}>
-                <td>3:45 PM</td>
-                <td>4:45 PM</td>
-                <td>7</td>
-                <td>{this.props.date.format('L')}</td>
-              </tr>
-              <tr className="row" onClick={this.openModal}>
-                <td>4:00 PM</td>
-                <td>5:00 PM</td>
-                <td>12</td>
-                <td>{this.props.date.format('L')}</td>
-              </tr>
-              <tr className="row" onClick={this.openModal}>
-                <td>5:15 PM</td>
-                <td>6:15 PM</td>
-                <td>3</td>
-                <td>{this.props.date.format('L')}</td>
-              </tr>
+              {this.state.availableTrips.map(this.createTrips)}
             </tbody>
           </table>
         </div>
         <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()} 
         		confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()}
-        		updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)}>
+        		updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)}>
             <ReservationSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} 
-            					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
-            					date={this.props.date}/>
+            					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
+            					date={this.props.date} numMilitary={this.props.numMilitary} updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}/>
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
-            				updateNumPassengers={(adults,seniors,children) => this.props.updateNumPassengers(adults,seniors,children)} 
-            				updateShowResults={() => this.props.updateShowResults()} onClose={() => this.closeModal()} date={this.props.date}/>
+            				updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
+            				updateShowResults={(booked) => this.props.updateShowResults(booked)} onClose={() => this.closeModal()} date={this.props.date}/>
         </Modal>
       </div>
     );
@@ -530,30 +662,61 @@ class App extends Component {
     super(props);
     this.state = {
       date: moment(),
-      stations: ["Boston, MA - South Station","Boston, MA - Back Bay Station","Route 128, MA","Providence, RI","Kingston, RI",
-        "Westerly,RI","Mystic, CT","New London, CT","Old Saybrook, CT","New Haven, CT","Bridgeport, CT","Stamford, CT",
-        "New Rochelle, NY","New York, NY - Penn Station","Newark, NJ","Newark Liberty Intl. Air., NJ","Metro Park, NJ",
-        "Trenton, NJ","Philadelphia, PA - 30th Street Station","Wilmington, DE - J.R. Biden, Jr. Station","Aberdeen, MD",
-        "Baltimore, MD - Penn Station","BWI Marshall Airport, MD","New Carrollton, MD","Washington, DC - Union Station"],
+      stations: [],
+      trains: [],
+      stops_at: [],
+      availableTrips: [],
       //numPassengers: 1,
       numPassengers: {
         adults: 0,
         seniors: 0,
         children: 0,
+        pets: 0,
       },
+      numMilitary: 0,
       showResults: false,
-      seatsFree: "# seats free"
     };
   };
 
+/*
+  componentDidUpdate() {
+  	var trips = this.state.availableTrips.sort((a,b) => a.departure_time > b.departure_time);
+  	console.log(trips);
+  	if(this.state.availableTrips != trips){
+  		console.log(trips);
+  		this.setState({
+  			availableTrips: trips,
+  		});
+  	}else{
+  		return;
+  	}
+  }
+*/
+
   componentWillMount() {
-  	fetch('https://railroadbackend.appspot.com/stations/').then(res => res.json).then(res => console.log(res));
+	Promise.all([
+      fetch('https://railroadbackend.appspot.com/stations/').then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/trains/').then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/stops_at/').then(res => res.json()),
+    ]).then(([stations, trains, stops_at]) => {
+    	this.setState({
+	  		stations: stations,
+	  		trains: trains,
+	  		stops_at: stops_at,
+	  	});
+    });
   }
 
-  updateShowResults = (numPassengers) => {
-    this.setState({
-      showResults: !this.state.showResults,
-    });
+  updateShowResults = (booked) => {
+  	if(booked){
+	    this.setState({
+	      showResults: false,
+	    });
+	}else{
+		this.setState({
+	      showResults: true,
+	    });
+	}
     /*if(numPassengers > 0){
       this.setState({
         showResults: true,
@@ -569,15 +732,61 @@ class App extends Component {
     });
   };
 
-  updateNumPassengers = (newAdults,newSeniors,newChildren) => {
+  updateNumPassengers = (newAdults,newSeniors,newChildren,newPets) => {
     this.setState({
       numPassengers: {
         adults: newAdults,
         seniors: newSeniors,
         children: newChildren,
+        pets: newPets,
       }
     });
   };
+
+  updateNumMilitary = (numMilitary) => {
+    var nextNumMilitary = this.state.numMilitary + numMilitary;
+    this.setState({
+      numMilitary: nextNumMilitary,
+    });
+  };
+
+  loadTrips = (date,origin,originID,destination,destinationID,trainID,availableTrips) => {
+  	var trip = {};
+  	fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + trainID).then(res => res.json()).then(res => {
+		trip.date = date;
+		trip.departure_time = this.state.stops_at.find(s => s.train === trainID && s.station === originID).time_out;
+		trip.arrival_time = this.state.stops_at.find(s => s.train === trainID && s.station === destinationID).time_in;
+		trip.origin = origin;
+		trip.destination = destination;
+		trip.seats_free = res.seats_free;
+		trip.train = trainID;
+		if(trip.seats_free > 0){
+			availableTrips.push(trip);
+		}
+		}).then(() => {
+			this.setState({
+				availableTrips: availableTrips,
+			});
+		});
+  }
+
+  findAvailableTrips(date,origin,destination) {
+  	var availableTrips = [];
+
+  	try {
+		var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
+		var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
+		for(let i = 1; i <= 28; i++){
+  		this.loadTrips(date.format("YYYY-MM-DD"),origin,originID,destination,destinationID,i,availableTrips);
+  	}
+	}
+	catch(error) {
+		console.error(error);
+	}
+
+  	//var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
+  	//var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
+  }
 
   render() {
     return (
@@ -585,10 +794,12 @@ class App extends Component {
         <header className="App-header">
           <img src={banner}  alt="" className="Banner"/>
         </header>
-        <TripInfo date={this.state.date} updateDate={(date) => this.updateDate(date)} stations={this.state.stations} numPassengers={this.state.numPassengers} 
-        			updateShowResults={(numPassengers) => this.updateShowResults(numPassengers)}/>
-        <Results showResults={this.state.showResults} updateShowResults={(numPassengers) => this.updateShowResults(numPassengers)} seatsFree={this.state.seatsFree} date={this.state.date} 
-        numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children) => this.updateNumPassengers(adults,seniors,children)}/>
+        <TripInfo date={this.state.date} updateDate={(date) => this.updateDate(date)} stations={this.state.stations.map(s => s.station_name)} numPassengers={this.state.numPassengers} 
+        			updateShowResults={(booked) => this.updateShowResults(booked)}
+        			findAvailableTrips={(date,origin,destination) => this.findAvailableTrips(date,origin,destination)}/>
+        <Results showResults={this.state.showResults} updateShowResults={(booked) => this.updateShowResults(booked)} date={this.state.date} 
+        			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.updateNumPassengers(adults,seniors,children,pets)}
+        			availableTrips={this.state.availableTrips} numMilitary={this.state.numMilitary} updateNumMilitary={(numMilitary) => this.updateNumMilitary(numMilitary)}/>
       </div>
     );
   }
