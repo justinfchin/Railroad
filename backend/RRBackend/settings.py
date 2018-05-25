@@ -25,18 +25,13 @@ STATIC_ROOT= os.path.join(BASE_DIR,'static/')
 SECRET_KEY = 'd(^(5ahy#0kghu64p-0un5rqr2r7$%t-b3yut9$a_g8ir@pgcy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
-    DEBUG = False
-else:
-    DEBUG = True
+DEBUG = False if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine') else True
 
-ALLOWED_HOSTS = [
-        '*'
+ALLOWED_HOSTS = ['*'
         ]
 
 
 # Application definition
-
 INSTALLED_APPS = [
         'django.contrib.admin',
         'django.contrib.auth',

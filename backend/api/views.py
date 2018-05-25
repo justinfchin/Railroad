@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.db import connection
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
@@ -30,7 +31,7 @@ from .serializers import TrainsSerializer
 from .serializers import TripsSerializer
 
 
-def __grab_list(the_model, the_serializer, request):
+def __endpoint_list(the_model, the_serializer, request):
     if request.method == 'GET':
         objects = the_model.objects.all()
         serializer = the_serializer(objects, many=True)
@@ -44,7 +45,7 @@ def __grab_list(the_model, the_serializer, request):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
-def __grab_detail(the_model, the_serializer, request, **kwargs):
+def __endpoint_detail(the_model, the_serializer, request, **kwargs):
     try:
         objects = the_model.objects.get(**kwargs)
     except the_model.DoesNotExist:
@@ -71,45 +72,66 @@ def spring_memes(request):
     temp = loader.get_template("index.html")
     return HttpResponse(temp.render())
 
+
+@csrf_exempt
 def fare_types_list(request):
     """List all fare types, or create a new fare_type"""
-    return __grab_list(FareTypes, FareTypesSerializer, request)
+    return __endpoint_list(FareTypes, FareTypesSerializer, request)
 
+@csrf_exempt
 def fare_type_detail(request, fare_id):
     """
     Retrieve, update or delete a fare_type.
     """
-    return __grab_detail(FareTypes, FareTypesSerializer, request, fare_id=fare_id)
+    return __endpoint_detail(FareTypes, FareTypesSerializer, request, fare_id=fare_id)
+
+@csrf_exempt
+def calc_trip_fare(request, trip_date, start_station, end_station, reg_adults, mt_adults, senior, children, pets):
+    """
+    Calculates fare for a trip.
+    """
+    fare = None
+    with connection.cursor() as cursor:
+        args = cursor.callproc('calc_fare_for_trip', [trip_date, start_station, end_station, reg_adults, mt_adults, senior, children, pets, fare])
+        fare = cursor.fetchall()[0][0]
+    return JsonResponse({'fare': fare})
 
 
+@csrf_exempt
 def passengers_list(request):
     """List all passengers, or create a new passenger"""
-    return __grab_list(Passengers, PassengersSerializer, request)
+    return __endpoint_list(Passengers, PassengersSerializer, request)
 
+@csrf_exempt
 def passenger_detail(request, passenger_id):
     """
     Retrieve, update or delete a passenger.
     """
-    return __grab_detail(Passengers, PassengersSerializer, request, passenger_id=passenger_id)
+    return __endpoint_detail(Passengers, PassengersSerializer, request, passenger_id=passenger_id)
 
 
+@csrf_exempt
 def reservations_list(request):
-    return __grab_list(Reservations, ReservationsSerializer, request)
+    return __endpoint_list(Reservations, ReservationsSerializer, request)
 
+@csrf_exempt
 def reservation_detail(request, reservation_id):
     """
     Retrieve, update or delete a reservation.
     """
-    return __grab_detail(Reservations, ReservationsSerializer, request, reservation_id=reservation_id)
+    return __endpoint_detail(Reservations, ReservationsSerializer, request, reservation_id=reservation_id)
 
 
 
+@csrf_exempt
 def seats_free_list(request):
-    return __grab_list(SeatsFree, SeatsFreeSerializer, request)
+    return __endpoint_list(SeatsFree, SeatsFreeSerializer, request)
 
+@csrf_exempt
 def seats_free_detail(request, seat_free_date, train_id, segment_id):
-    return __grab_detail(SeatsFree, SeatsFreeSerializer, request, seat_free_date=seat_free_date)
+    return __endpoint_detail(SeatsFree, SeatsFreeSerializer, request, seat_free_date=seat_free_date)
 
+@csrf_exempt
 def seats_free_on_trip(request, seat_free_date, start_station, end_station, train_id):
     seats_free = None
     with connection.cursor() as cursor:
@@ -118,48 +140,59 @@ def seats_free_on_trip(request, seat_free_date, start_station, end_station, trai
     return JsonResponse({'seats_free': seats_free})
 
 
+@csrf_exempt
 def segments_list(request):
-    return __grab_list(Segments, SegmentsSerializer, request)
+    return __endpoint_list(Segments, SegmentsSerializer, request)
 
+@csrf_exempt
 def segment_detail(request, segment_id):
     """
     Retrieve, update or delete a segment.
     """
-    return __grab_detail(Segments, SegmentsSerializer, request, segment_id=segment_id)
+    return __endpoint_detail(Segments, SegmentsSerializer, request, segment_id=segment_id)
 
 
+@csrf_exempt
 def stations_list(request):
-    return __grab_list(Stations, StationsSerializer, request)
+    return __endpoint_list(Stations, StationsSerializer, request)
 
+@csrf_exempt
 def station_detail(request, station_id):
-    return __grab_detail(Stations, StationsSerializer, request, station_id=station_id)
+    return __endpoint_detail(Stations, StationsSerializer, request, station_id=station_id)
 
+@csrf_exempt
 def station_detail_by_endpoints(request, station_start, station_end):
-    return __grab_detail(Stations, StationsSerializer, request, station_id=station_id)
+    return __endpoint_detail(Stations, StationsSerializer, request, station_id=station_id)
 
 
+@csrf_exempt
 def stops_at_list(request):
-    return __grab_list(StopsAt, StopsAtSerializer, request)
+    return __endpoint_list(StopsAt, StopsAtSerializer, request)
 
+@csrf_exempt
 def stops_at_detail(request, train_id, station_id):
-    return __grab_detail(StopsAt, StopsAtSerializer, request, train_id=train_id, station_id=station_id)
+    return __endpoint_detail(StopsAt, StopsAtSerializer, request, train_id=train_id, station_id=station_id)
 
 
+@csrf_exempt
 def trains_list(request):
-    return __grab_list(Trains, TrainsSerializer, request)
+    return __endpoint_list(Trains, TrainsSerializer, request)
 
+@csrf_exempt
 def train_detail(request, train_id):
     """
     Retrieve, update or delete a train.
     """
-    return __grab_detail(Trains, TrainsSerializer, request, train_id=train_id)
+    return __endpoint_detail(Trains, TrainsSerializer, request, train_id=train_id)
 
 
+@csrf_exempt
 def trips_list(request):
-    return __grab_list(Trips, TripsSerializer, request)
+    return __endpoint_list(Trips, TripsSerializer, request)
 
+@csrf_exempt
 def trip_detail(request, trip_id):
     """
     Retrieve, update or delete a trip.
     """
-    return __grab_detail(Trips, TripsSerializer, request, trip_id=trip_id)
+    return __endpoint_detail(Trips, TripsSerializer, request, trip_id=trip_id)
