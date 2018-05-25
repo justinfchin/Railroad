@@ -1,0 +1,53 @@
+CREATE PROCEDURE `calc_seats_free`(IN s_station int(11),IN e_station int(11),IN t_date date ,IN t_id INT (11),OUT seats_free int(11))
+BEGIN
+DECLARE temp_station INT(11);	
+DECLARE temp_seg_n INT(11);
+DECLARE temp_seg_s INT(11); 
+DECLARE temp_seg_id INT(11);
+DECLARE temp_free_seats INT(11);
+DECLARE min_buffer INT (11); 
+    set temp_station = s_station;
+    set min_buffer = 999999; # holds our minimum number of seats 
+    
+	#if we are heading south 
+    if(e_station>s_station)THEN
+    
+		while temp_station!=e_station do
+			SELECT segment_id,seg_n_end,seg_s_end INTO temp_seg_id,temp_seg_n,temp_seg_s FROM segments WHERE seg_n_end = temp_station; 
+			SELECT freeseat INTO temp_free_seats FROM seats_free WHERE segment_id= temp_seg_id AND seat_free_date = t_date AND train_id = t_id;
+			
+			#compare our current minimum number of seats with the seats of the current segment 
+			if(temp_free_seats<min_buffer) THEN
+				set min_buffer= temp_free_seats;
+			END IF;
+			set temp_station = temp_seg_s; # next segment to check 
+    
+		END WHILE;
+    
+		set seats_free = min_buffer;
+    
+		select seats_free;
+		
+    ELSE # if we are heading north 
+		while temp_station!=e_station do
+			SELECT segment_id,seg_n_end,seg_s_end INTO temp_seg_id,temp_seg_n,temp_seg_s FROM segments WHERE seg_s_end = temp_station; 
+			SELECT freeseat INTO temp_free_seats FROM seats_free WHERE segment_id= temp_seg_id AND seat_free_date = t_date AND train_id = t_id;
+			
+			#compare our current minimum number of seats with the seats of the current segment 
+			if(temp_free_seats<min_buffer) THEN
+				set min_buffer= temp_free_seats;
+			END IF;
+			set temp_station = temp_seg_n; # next segment to check 
+    
+		END WHILE;
+    
+		set seats_free = min_buffer;
+    
+		select seats_free;
+    
+    
+    END IF;
+    
+    
+
+END

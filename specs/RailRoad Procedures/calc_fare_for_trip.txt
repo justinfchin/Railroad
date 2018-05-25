@@ -1,0 +1,67 @@
+CREATE PROCEDURE `calc_fare_for_trip`(IN trip_date date ,IN start_station INT(11),IN end_station INT(11),IN reg_adults INT(100), IN mt_adults INT(100),IN seniors INT(100), IN children INT(100), IN pets INT(100), OUT f_fare decimal(10,2))
+BEGIN
+#declaration for all attributes that will be stored 
+DECLARE adult_fare decimal(3,2);
+DECLARE m_adult_fare decimal(3,2);
+DECLARE senior_fare decimal(3,2);
+DECLARE children_fare decimal(3,2);
+DECLARE pet_fare decimal(3,2);
+DECLARE temp_station INT(11);
+DECLARE temp_s_station INT(11);
+DECLARE temp_e_station INT(11);
+DECLARE temp_seg_fare decimal(7,2);
+DECLARE temp_n_end INT(11);
+DECLARE temp_s_end INT(11);
+DECLARE seg_price decimal(10,3);
+DECLARE curr_date date;
+DECLARE discount INT(11);
+DECLARE days_in_between INT(11);
+
+# setting the fare variables  
+SELECT rate INTO adult_fare FROM fare_types WHERE fare_name='adult'; 
+SELECT rate INTO m_adult_fare FROM fare_types WHERE fare_name='military'; 
+SELECT rate INTO senior_fare FROM fare_types WHERE fare_name='senior'; 
+SELECT rate INTO children_fare FROM fare_types WHERE fare_name='child'; 
+SELECT rate INTO pet_fare FROM fare_types WHERE fare_name='pets'; 
+
+#starting price 
+SET seg_price = 0.0;
+SET temp_station = start_station;
+# get current date and calculate the number of days between the currdate and the day of the trip 
+SET curr_date = CURDATE();
+SET days_in_between = DATEDIFF(trip_date,curr_date);
+
+#calculate the discount for trips ahead of the current date. 
+if(days_in_between > 100) THEN
+set discount = 31;
+ELSE
+set discount = (days_in_between-0)*(31-0)/(100-0);
+END IF; 
+
+# if we are heading north 
+if(start_station > end_station) THEN 
+	WHILE (temp_station!=end_station) do
+		SELECT seg_fare,seg_n_end,seg_s_end INTO temp_seg_fare,temp_n_end,temp_s_end FROM segments WHERE seg_s_end=temp_station;
+		set seg_price = seg_pricetemp_seg_fare;
+		set temp_station = temp_n_end ;
+    END WHILE;        
+        
+ELSE # if we are heading south 
+	WHILE (temp_station!=end_station) do
+		SELECT seg_fare,seg_n_end,seg_s_end INTO temp_seg_fare,temp_n_end,temp_s_end FROM segments WHERE seg_n_end=temp_station;
+		set seg_price = seg_price + temp_seg_fare;
+		set temp_station = temp_s_end ;
+    END WHILE; 
+    
+END IF ;
+	# adding in the price of each type of customer 
+    set seg_price = seg_price + (adult_fare * reg_adults);
+	set seg_price = seg_price + (m_adult_fare * mt_adults);
+    set seg_price = seg_price + (senior_fare * seniors);
+    set seg_price = seg_price + (children_fare * children);
+    set seg_price = seg_price + (pet_fare * pets);
+    # final price 
+    set f_fare = seg_price - seg_price/discount; 
+    SELECT f_fare;
+
+END
