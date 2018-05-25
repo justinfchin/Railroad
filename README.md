@@ -1,8 +1,6 @@
-# Railroad
+# [Railroad](https://t2railroad.herokuapp.com/)
 CSC336 Railroad Project Spring2018
 
-### Site Demo:
-[Railroad Site](https://t2railroad.herokuapp.com/)
 
 ## Contents:
 1. [Background](#bg)
@@ -28,10 +26,9 @@ CSC336 Railroad Project Spring2018
 
 <a name="tech"></a>
 ## Technology
-- **Platform:** Google Cloud
-- **FrontEnd:** React
-- **BackEnd:** Python
-- **Framework:** Django
+- **Platform:** Google Cloud App Engine
+- **FrontEnd:** React, Javascript
+- **BackEnd:** Python, Django
 - **Database:** MySQL
 
 <a name="cont"></a>
