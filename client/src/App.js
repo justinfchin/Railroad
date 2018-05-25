@@ -131,6 +131,7 @@ class TripInfo extends Component {
       destination: "",
     };
     this.handleClick = this.handleClick.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -172,19 +173,25 @@ class TripInfo extends Component {
   handleClick() {
   	if(this.state.origin !== this.state.destination){
 	  	this.props.updateShowResults(false);
-	  	this.props.findAvailableTrips(this.state.date,this.state.origin,this.state.destination);
+      this.props.findAvailableTrips(this.state.date,this.state.origin,this.state.destination);
 		}else{
 			this.props.updateShowResults(true);
 		}
   };
 
+  handleChange() {
+    if(this.state.origin !== this.state.destination){
+      this.props.findAvailableTrips(this.state.date,this.state.origin,this.state.destination);
+    }
+  }
+
   render() {
     return (
       <div className="Head">
         <div className="TripInfo">
-          <Date date={this.props.date} updateDate={(date) => this.props.updateDate(date)}/>
-          <Origin stations={this.props.stations} updateOrigin={(origin) => this.updateOrigin(origin)}/>
-          <Destination stations={this.props.stations} updateDestination={(destination) => this.updateDestination(destination)}/>
+          <Date date={this.props.date} updateDate={(date) => this.props.updateDate(date)} onChange={this.handleChange}/>
+          <Origin stations={this.props.stations} updateOrigin={(origin) => this.updateOrigin(origin)} onChange={this.handleChange}/>
+          <Destination stations={this.props.stations} updateDestination={(destination) => this.updateDestination(destination)} onChange={this.handleChange}/>
           {/*<LessPass numPassengers={this.state.numPassengers} lessPass={this.lessPass}/>
           <NumPassengers numPassengers={this.state.numPassengers}/>
           <MorePass numPassengers={this.state.numPassengers} morePass={this.morePass}/>*/}
@@ -771,19 +778,84 @@ class App extends Component {
   }
 
   findAvailableTrips(date,origin,destination) {
-  	var availableTrips = [];
+    /*
+    var availableTrips = [];
+    try {
+      var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
+      var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
+      for(let i = 1; i <= 28; i++){
+        this.loadTrips(date.format("YYYY-MM-DD"),origin,originID,destination,destinationID,i,availableTrips);
+      }
+    }
+    catch(error) {
+      console.error(error);
+    }
+    */
 
+    date = date.format("YYYY-MM-DD");
+  	var availableTrips = [];
   	try {
 		var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
 		var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
-		for(let i = 1; i <= 28; i++){
-  		this.loadTrips(date.format("YYYY-MM-DD"),origin,originID,destination,destinationID,i,availableTrips);
+    Promise.all([
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 1).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 2).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 3).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 4).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 5).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 6).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 7).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 8).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 9).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 10).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 11).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 12).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 13).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 14).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 15).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 16).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 17).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 18).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 19).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 20).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 21).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 22).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 23).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 24).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 25).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 26).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 27).then(res => res.json()),
+      fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 28).then(res => res.json())
+    ]).then(([sf1,sf2,sf3,sf4,sf5,sf6,sf7,sf8,sf9,sf10,sf11,sf12,sf13,sf14,sf15,sf16,sf17,sf18,sf19,sf20,sf21,sf22,sf23,sf24,sf25,sf26,sf27,sf28]) => {
+      var seatsFree = [sf1,sf2,sf3,sf4,sf5,sf6,sf7,sf8,sf9,sf10,sf11,sf12,sf13,sf14,sf15,sf16,sf17,sf18,sf19,sf20,sf21,sf22,sf23,sf24,sf25,sf26,sf27,sf28];
+      for(var i = 1; i <= 28; i++){
+        var trip = {};
+        trip.date = date;
+        trip.departure_time = this.state.stops_at.find(s => s.train === i && s.station === originID).time_out;
+        trip.arrival_time = this.state.stops_at.find(s => s.train === i && s.station === destinationID).time_in;
+        trip.origin = origin;
+        trip.destination = destination;
+        trip.seats_free = seatsFree[i-1].seats_free;
+        trip.train = i;
+        if(trip.seats_free > 0){
+          availableTrips.push(trip);
+        }
+      }
+      availableTrips = availableTrips.sort((a,b) => {
+        var aDepart = a.departure_time.slice(0,2) + a.departure_time.slice(3,5) + a.departure_time.slice(6,8);
+        var bDepart = b.departure_time.slice(0,2) + b.departure_time.slice(3,5) + b.departure_time.slice(6,8);
+        return aDepart - bDepart;
+      });
+      return availableTrips;
+    }).then(availableTrips => {
+      this.setState({
+        availableTrips: availableTrips,
+      });
+    });
   	}
-	}
-	catch(error) {
-		console.error(error);
-	}
-
+  	catch(error) {
+  		console.error(error);
+  	}
   	//var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
   	//var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
   }
