@@ -91,9 +91,11 @@ def calc_trip_fare(request, trip_date, start_station, end_station, reg_adults, m
     Calculates fare for a trip.
     """
     fare = None
+    gbg = None
     with connection.cursor() as cursor:
-        args = cursor.callproc('calc_fare_for_trip', [trip_date, start_station, end_station, reg_adults, mt_adults, senior, children, pets, fare])
-        fare = cursor.fetchall()[0][0]
+        args = cursor.callproc('calc_fare_for_trip', [trip_date, start_station, end_station, reg_adults, mt_adults, senior, children, pets, gbg])
+        tmp = cursor.fetchall()
+        fare = tmp[0][0]
     return JsonResponse({'fare': fare})
 
 

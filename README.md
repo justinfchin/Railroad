@@ -1,8 +1,7 @@
 # Railroad
 CSC336 Railroad Project Spring2018
 
-### Site Demo:
-[Railroad Site](https://t2railroad.herokuapp.com/)
+### [Site Demo:](https://t2railroad.herokuapp.com/)
 
 ## Contents:
 1. [Background](#bg)
