@@ -278,11 +278,12 @@ th {
 
 .fareBook {
   display: block;
+  font-size: 1.5em;
 }
 
 .bookTrip {
   margin-top: 10%;
-  font-size: 1.5em;
+  font-size: 1em;
   padding: 0.5em;
   border: thin solid;
   background-color: #E5E8E8;
@@ -293,8 +294,8 @@ th {
   height: 2.1em;
   width: 5em;
   margin-right: 2em;
+  margin-left: 0.5em;
   margin-top: 10%;
-  font-size: 1.5em;
   text-align: center;
   box-sizing: border-box;
   background-color: #15D388;
