@@ -352,8 +352,8 @@ class ReservationSpecs extends Component {
     var prevSeniorsCount = this.props.numPassengers.seniors;
     var prevChildrenCount = this.props.numPassengers.children;
     var prevPetsCount = this.props.numPassengers.pets;
-    if(currAdultsCount <= 0 && prevSeniorsCount <= 0 && prevChildrenCount > 0){
-      alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
+    if(currAdultsCount <= 0 && prevSeniorsCount <= 0 && (prevChildrenCount > 0 || prevPetsCount > 0)){
+      alert("There must be at least 1 adult or 1 senior to book a child or pet ticket.");
       return;
     }
     if(prevAdultsCount > 0){
@@ -382,8 +382,8 @@ class ReservationSpecs extends Component {
     var currSeniorsCount = prevSeniorsCount-1;
     var prevChildrenCount = this.props.numPassengers.children;
     var prevPetsCount = this.props.numPassengers.pets;
-    if(currSeniorsCount <= 0 && prevAdultsCount <= 0 && prevChildrenCount > 0){
-      alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
+    if(currSeniorsCount <= 0 && prevAdultsCount <= 0 && (prevChildrenCount > 0 || prevPetsCount > 0)){
+      alert("There must be at least 1 adult or 1 senior to book a child or pet ticket.");
       return;
     }
     if(prevSeniorsCount > 0){
