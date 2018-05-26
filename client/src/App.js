@@ -174,7 +174,8 @@ class TripInfo extends Component {
 
   handleClick() {
   	if(this.state.origin !== this.state.destination){
-	  	this.props.updateShowResults(false);
+	  	this.props.updateShowResults(true);
+      this.props.updateTripsLoading(true);
       this.props.findAvailableTrips(this.state.date,this.state.origin,this.state.destination);
 		}else{
 			this.props.updateShowResults(true);
@@ -304,10 +305,12 @@ class Military extends Component {
 
   handleChange(event) {
     if(event.target.checked){
+      this.props.updateLoading(true);
       this.props.updateNumMilitary(1);
       this.props.updateFare(this.props.origin,this.props.destination,this.props.numPassengers.adults,this.props.numMilitary+1,
                             this.props.numPassengers.seniors,this.props.numPassengers.children,this.props.numPassengers.pets);
     }else{
+      this.props.updateLoading(true);
       this.props.updateNumMilitary(-1);
       this.props.updateFare(this.props.origin,this.props.destination,this.props.numPassengers.adults,this.props.numMilitary-1,
                             this.props.numPassengers.seniors,this.props.numPassengers.children,this.props.numPassengers.pets);
@@ -330,6 +333,18 @@ class Military extends Component {
 			</div>
 		);
 	}
+}
+
+class FareLoader extends Component {
+  render() {
+    if(this.props.fareLoading){
+      return(
+        <div className="fareLoader"></div>
+      );
+    }else{
+      return null;
+    }
+  }
 }
 
 class ReservationSpecs extends Component {
@@ -357,6 +372,7 @@ class ReservationSpecs extends Component {
       return;
     }
     if(prevAdultsCount > 0){
+      this.updateLoading(true);
       this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,currAdultsCount,this.props.numMilitary,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }
@@ -369,6 +385,7 @@ class ReservationSpecs extends Component {
     var prevChildrenCount = this.props.numPassengers.children;
     var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
+      this.updateLoading(true);
       this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,currAdultsCount,this.props.numMilitary,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }else{
@@ -387,6 +404,7 @@ class ReservationSpecs extends Component {
       return;
     }
     if(prevSeniorsCount > 0){
+      this.updateLoading(true);
       this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount,prevPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,prevAdultsCount,this.props.numMilitary,currSeniorsCount,prevChildrenCount,prevPetsCount);
     }
@@ -399,6 +417,7 @@ class ReservationSpecs extends Component {
     var prevChildrenCount = this.props.numPassengers.children;
     var prevPetsCount = this.props.numPassengers.pets;
     if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
+      this.updateLoading(true);
       this.props.updateNumPassengers(prevAdultsCount,currSeniorsCount,prevChildrenCount,prevPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,prevAdultsCount,this.props.numMilitary,currSeniorsCount,prevChildrenCount,prevPetsCount);
     }else{
@@ -413,6 +432,7 @@ class ReservationSpecs extends Component {
     var currChildrenCount = prevChildrenCount-1;
     var prevPetsCount = this.props.numPassengers.pets;
     if(prevChildrenCount > 0){
+      this.updateLoading(true);
       this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount,prevPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,prevAdultsCount,this.props.numMilitary,prevSeniorsCount,currChildrenCount,prevPetsCount);
     }
@@ -428,6 +448,7 @@ class ReservationSpecs extends Component {
       alert("There must be at least 1 adult or 1 senior to book a child's ticket.");
       return;
     }else if(prevAdultsCount + prevSeniorsCount + prevChildrenCount < 8){
+      this.updateLoading(true);
       this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,currChildrenCount,prevPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,prevAdultsCount,this.props.numMilitary,prevSeniorsCount,currChildrenCount,prevPetsCount);
     }else{
@@ -442,6 +463,7 @@ class ReservationSpecs extends Component {
     var prevPetsCount = this.props.numPassengers.pets;
     var currPetsCount = prevPetsCount-1;
     if(prevPetsCount > 0){
+      this.updateLoading(true);
       this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,prevChildrenCount,currPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,prevAdultsCount,this.props.numMilitary,prevSeniorsCount,prevChildrenCount,currPetsCount);
     }
@@ -457,6 +479,7 @@ class ReservationSpecs extends Component {
       alert("There must be at least 1 adult or 1 senior to add a pet.");
       return;
     }else if(prevPetsCount < 2){
+      this.updateLoading(true);
       this.props.updateNumPassengers(prevAdultsCount,prevSeniorsCount,prevChildrenCount,currPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,prevAdultsCount,this.props.numMilitary,prevSeniorsCount,prevChildrenCount,currPetsCount);
     }else{
@@ -474,7 +497,11 @@ class ReservationSpecs extends Component {
       return;
     }
     this.props.updateConfirmPassCount();
-  }
+  };
+
+  updateLoading = (loading) => {
+    this.props.updateFareLoading(loading);
+  };
 
   render() {
   	if(this.state.display){
@@ -523,11 +550,13 @@ class ReservationSpecs extends Component {
         <Military inMilitary={new Array(this.props.numPassengers.adults).fill(true)} numMilitary={this.props.numMilitary}
                   updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}
                   updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}
-                  numPassengers={this.props.numPassengers} origin={this.props.origin} destination={this.props.destination}/>
+                  numPassengers={this.props.numPassengers} origin={this.props.origin} destination={this.props.destination}
+                  updateLoading={(loading) => this.updateLoading(loading)}/>
         <div className="fareBook">
-	        <text className="fare">Fare: ${this.props.fare}</text>
+          <FareLoader fareLoading={this.props.fareLoading}/>
+	        <div className="fare">Fare: ${this.props.fare}</div>
 	        <button className="bookTrip" onClick={() => this.handleClick()}>Continue</button>
-	    </div>
+	      </div>
       </div>
     );
   }
@@ -671,7 +700,8 @@ class Results extends Component {
             					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             					date={this.props.date} numMilitary={this.props.numMilitary} updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}
                       fare={this.props.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}
-                      origin={this.props.origin} destination={this.props.destination}/>
+                      origin={this.props.origin} destination={this.props.destination} fareLoading={this.props.fareLoading} 
+                      updateFareLoading={(fareLoading) => this.props.updateFareLoading(fareLoading)}/>
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
             				updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             				updateShowResults={(booked) => this.props.updateShowResults(booked)} onClose={() => this.closeModal()} date={this.props.date}
@@ -679,6 +709,18 @@ class Results extends Component {
         </Modal>
       </div>
     );
+  }
+}
+
+class TripsLoader extends Component {
+  render() {
+    if(this.props.tripsLoading){
+      return (
+        <div className="tripsLoader"></div>
+      );
+    }else{
+      return null;
+    }
   }
 }
 
@@ -703,6 +745,8 @@ class App extends Component {
       origin: "",
       destination: "",
       fare: 0,
+      tripsLoading: false,
+      fareLoading: false,
     };
   };
 
@@ -796,8 +840,21 @@ class App extends Component {
     fetch('https://railroadbackend.appspot.com/calc_trip_fare/' + this.state.date.format("YYYY-MM-DD") + '/' + originID + '/' + destinationID + '/' + adults + '/' + military + '/' + seniors + '/' + children + '/' + pets + '/').then(res => res.json().then((fare) => {
       this.setState({
         fare: fare.fare,
+        fareLoading: false,
       });
     }));
+  };
+
+  updateTripsLoading = (tripsLoading) => {
+    this.setState({
+      tripsLoading: tripsLoading
+    });
+  };
+
+  updateFareLoading = (fareLoading) => {
+    this.setState({
+      fareLoading: fareLoading
+    });
   };
 
   loadTrips = (date,origin,originID,destination,destinationID,trainID,availableTrips) => {
@@ -870,7 +927,8 @@ class App extends Component {
       fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 27).then(res => res.json()),
       fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + 28).then(res => res.json())
     ]).then((seatsFree) => {
-      //var seatsFree = [sf1,sf2,sf3,sf4,sf5,sf6,sf7,sf8,sf9,sf10,sf11,sf12,sf13,sf14,sf15,sf16,sf17,sf18,sf19,sf20,sf21,sf22,sf23,sf24,sf25,sf26,sf27,sf28];
+      this.updateTripsLoading(false);
+      this.updateShowResults(false);
       for(var i = 1; i <= 28; i++){
         var trip = {};
         trip.date = date;
@@ -913,12 +971,13 @@ class App extends Component {
         			updateShowResults={(booked) => this.updateShowResults(booked)}
         			findAvailableTrips={(date,origin,destination) => this.findAvailableTrips(date,origin,destination)}
               origin={this.state.origin} destination={this.state.destination} updateOrigin={(origin) => this.updateOrigin(origin)}
-              updateDestination={(destination) => this.updateDestination(destination)}/>
+              updateDestination={(destination) => this.updateDestination(destination)} updateTripsLoading={(tripsLoading) => this.updateTripsLoading(tripsLoading)}/>
+        <TripsLoader tripsLoading={this.state.tripsLoading}/>
         <Results showResults={this.state.showResults} updateShowResults={(booked) => this.updateShowResults(booked)} date={this.state.date} 
         			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.updateNumPassengers(adults,seniors,children,pets)}
         			availableTrips={this.state.availableTrips} numMilitary={this.state.numMilitary} updateNumMilitary={(numMilitary) => this.updateNumMilitary(numMilitary)}
               fare={this.state.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.updateFare(origin,destination,adults,military,seniors,children,pets)}
-              origin={this.state.origin} destination={this.state.destination}/>
+              origin={this.state.origin} destination={this.state.destination} fareLoading={this.state.fareLoading} updateFareLoading={(fareLoading) => this.updateFareLoading(fareLoading)}/>
       </div>
     );
   }

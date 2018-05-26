@@ -277,8 +277,11 @@ th {
 }
 
 .fareBook {
-  display: block;
-  font-size: 1.5em;
+  display: flex;
+  float: right;
+  margin-bottom: 4em;
+  margin-top: 2em;
+  position: static;
 }
 
 .bookTrip {
@@ -292,9 +295,10 @@ th {
 
 .fare {
   height: 2.1em;
-  width: 5em;
+  width: 8em;
+  font-size: 1.5em;
   margin-right: 2em;
-  margin-left: 0.5em;
+  margin-left: 2em;
   margin-top: 10%;
   text-align: center;
   box-sizing: border-box;
@@ -321,6 +325,34 @@ th {
   margin-right: 0.5em;
   margin-top: 0.5em;
   cursor: pointer;
+}
+
+.tripsLoader {
+  margin-top: 3em;
+  margin-left: auto;
+  margin-right: auto;
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #3498db;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 1s linear infinite;
+}
+
+.fareLoader {
+  margin-top: 3em;
+  margin-right: -2em;
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @keyframes App-logo-spin {
