@@ -301,8 +301,18 @@ class NumPets extends Component {
   }
 }
 
+class NumMilitary extends Component {
+  render() {
+    return (
+      <div className="NumMilitary">
+        <input className="pass_input" value={this.props.numMilitary} type="input_bar"/>
+      </div>
+    );
+  }
+}
+
 class Military extends Component {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
   }
@@ -336,7 +346,43 @@ class Military extends Component {
 			{this.props.inMilitary.map((currOption, index) => this.createOptions(index+1))}
 			</div>
 		);
-	}
+	}*/
+  lessMilitary = () => {
+    if(this.props.numMilitary > 0){
+      this.props.updateLoading(true);
+      this.props.updateFare(this.props.origin,this.props.destination,this.props.numPassengers.adults,this.props.numMilitary-1,this.props.numPassengers.seniors,this.props.numPassengers.children,this.props.numPassengers.pets);
+      this.props.updateNumMilitary(-1);
+    }
+  };
+
+  moreMilitary = () => {
+    if(this.props.numMilitary < this.props.numPassengers.adults){
+      this.props.updateLoading(true);
+      this.props.updateFare(this.props.origin,this.props.destination,this.props.numPassengers.adults,this.props.numMilitary+1,this.props.numPassengers.seniors,this.props.numPassengers.children,this.props.numPassengers.pets);
+      this.props.updateNumMilitary(1);
+    }else{
+      alert('Limit 1 military discount per adult.')
+    }
+    if(this.props.numPassengers.adults === 0){
+      alert('Military discounts can only be added to an adult. Please add an adult first.');
+    }
+  };
+
+  render() {
+    return (
+      <div className="PassengerCount">
+        <div className="NumPassType">
+          <LessPass lessPass={this.lessMilitary}/>
+            <NumMilitary numMilitary={this.props.numMilitary}/>
+          <MorePass morePass={this.moreMilitary}/>
+        </div>
+        <div className="PassengerDescription">
+          <div className="PassengerType">Military</div>
+          <div className="PassengerAge">(1 per Adult)</div>
+        </div>
+      </div>
+    );
+  }
 }
 
 class FareLoader extends Component {
@@ -811,6 +857,11 @@ class App extends Component {
   };
 
   updateNumPassengers = (newAdults,newSeniors,newChildren,newPets) => {
+    if(newAdults < this.state.numMilitary){
+      this.setState({
+        numMilitary: newAdults
+      });
+    }
     this.setState({
       numPassengers: {
         adults: newAdults,
