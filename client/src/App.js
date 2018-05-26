@@ -250,6 +250,7 @@ class Modal extends React.Component {
 
     this.props.updateFare("reset")
     this.props.updateNumPassengers(0,0,0,0);
+    this.props.updateNumMilitary(0);
     if(this.props.confirmPassCount){
     	this.props.updateConfirmPassCount();
     }
@@ -320,11 +321,11 @@ class Military extends Component {
     }
   };
 
-	createOptions(numMilitary) {
+	createOptions(id) {
 		return (
-			<div>
+			<div key={id}>
 				Military?
-				<input ref={numMilitary} key={numMilitary} type="checkbox" onChange={event => this.handleChange(event)}/>
+				<input ref={id} key={id} type="checkbox" onChange={event => this.handleChange(event)}/>
 			</div>
 		);
 	}
@@ -699,7 +700,8 @@ class Results extends Component {
         <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()} 
         		confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()}
         		updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)}
-            updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}>
+            updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}
+            updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}>
             <ReservationSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} 
             					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             					date={this.props.date} numMilitary={this.props.numMilitary} updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}
@@ -819,11 +821,20 @@ class App extends Component {
     });
   };
 
-  updateNumMilitary = (numMilitary) => {
-    var nextNumMilitary = this.state.numMilitary + numMilitary;
-    this.setState({
-      numMilitary: nextNumMilitary,
-    });
+  updateNumMilitary = (updateMil) => {
+    if(updateMil === 1){
+      this.setState({
+        numMilitary: this.state.numMilitary+1,
+      });
+    }else if(updateMil === -1){
+      this.setState({
+        numMilitary: this.state.numMilitary-1,
+      });
+    }else if(updateMil === 0){
+      this.setState({
+        numMilitary: 0,
+      });
+    }
   };
 
   updateOrigin = (origin) => {
