@@ -246,6 +246,7 @@ class Modal extends React.Component {
   close(e) {
     e.preventDefault()
 
+    this.props.updateFare("reset")
     this.props.updateNumPassengers(0,0,0,0);
     if(this.props.confirmPassCount){
     	this.props.updateConfirmPassCount();
@@ -695,7 +696,8 @@ class Results extends Component {
         </div>
         <Modal className="Modal" isOpen={this.state.isModalOpen} onClose={() => this.closeModal()} 
         		confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()}
-        		updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)}>
+        		updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)}
+            updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}>
             <ReservationSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} 
             					numPassengers={this.props.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             					date={this.props.date} numMilitary={this.props.numMilitary} updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}
@@ -835,14 +837,20 @@ class App extends Component {
   };
 
   updateFare = (origin,destination,adults,military,seniors,children,pets) => {
-    var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
-    var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
-    fetch('https://railroadbackend.appspot.com/calc_trip_fare/' + this.state.date.format("YYYY-MM-DD") + '/' + originID + '/' + destinationID + '/' + adults + '/' + military + '/' + seniors + '/' + children + '/' + pets + '/').then(res => res.json().then((fare) => {
+    if(origin === "reset"){
       this.setState({
-        fare: fare.fare,
-        fareLoading: false,
+        fare: 0
       });
-    }));
+    }else{
+      var originID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === origin.replace(/\s/g, '')).station_id;
+      var destinationID = this.state.stations.find(s => s.station_name.replace(/\s/g, '') === destination.replace(/\s/g, '')).station_id;
+      fetch('https://railroadbackend.appspot.com/calc_trip_fare/' + this.state.date.format("YYYY-MM-DD") + '/' + originID + '/' + destinationID + '/' + adults + '/' + military + '/' + seniors + '/' + children + '/' + pets + '/').then(res => res.json().then((fare) => {
+        this.setState({
+          fare: fare.fare,
+          fareLoading: false,
+        });
+      }));
+    }
   };
 
   updateTripsLoading = (tripsLoading) => {

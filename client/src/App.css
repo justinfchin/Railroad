@@ -243,7 +243,7 @@ th {
 }
 
 .NumAdults, .NumSeniors, .NumChildren, .NumPets {
-  margin-top: 0.5em;
+  margin-top: 0.45em;
   height: 100%;
   box-sizing: border-box;
 }
@@ -258,6 +258,7 @@ th {
 .NumPassType {
   margin-right: 0.5em;
   display: flex;
+  height: 3em;
   border: thin solid;
 }
 
