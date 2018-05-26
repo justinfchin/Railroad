@@ -423,6 +423,9 @@ class ReservationSpecs extends Component {
     }
     if(prevAdultsCount > 0){
       this.updateLoading(true);
+      if(this.props.numMilitary === prevAdultsCount){
+        this.props.updateNumMilitary(-1);
+      }
       this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
       this.props.updateFare(this.props.origin,this.props.destination,currAdultsCount,this.props.numMilitary,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }
@@ -627,23 +630,20 @@ class PassengerSpecs extends Component {
 	}
 
 	handleClick = () => {
-		var adultsCount = this.props.numPassengers.adults;
-	    var seniorsCount = this.props.numPassengers.seniors;
-	    var childrenCount = this.props.numPassengers.children;
-	    var date = this.props.date;
-	    /*fetch('reservations/', {
-	      method: 'POST',
-	      headers: {
-	        'Accept': 'application/json',
-	        'Content-Type': 'application/json',
-	      },
-	      body: JSON.stringify({
-	        adultsCount: adultsCount,
-	        seniorsCount: seniorsCount,
-	        childrenCount: childrenCount,
-	        date: date,
-	      }),
-	    });*/
+    fetch('http://railroadbackend.appspot.com/passengers/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fname: this.refs.first_name.value,
+        lname: this.refs.last_name.value,
+        email: this.refs.email.value,
+        preferred_card_number: this.refs.cc_num.value,
+        preferred_billing_address: this.refs.address.value,
+      }),
+    });
 
 		this.props.updateNumPassengers(0,0,0,0);
 		this.props.updateConfirmPassCount();
@@ -658,9 +658,11 @@ class PassengerSpecs extends Component {
 		return (
 			<form className="ReservationSpecs">
 				<div>
-					<input className="form_input" placeholder="First Name"/>
-					<input className="form_input" placeholder="Last Name"/>
-					<input className="form_input" placeholder="Email"/>
+					<input ref="first_name" className="form_input" placeholder="First Name"/>
+					<input ref="last_name" className="form_input" placeholder="Last Name"/>
+					<input ref="email" className="form_input" placeholder="Email"/>
+          <input ref="cc_num" className="form_input" placeholder="Credit Card #"/>
+          <input ref="address" className="form_input" placeholder="Address"/>
 				</div>
 				<button className="bookTrip" onClick={() => this.handleClick()}>Book Trip</button>
 			</form>
@@ -857,11 +859,6 @@ class App extends Component {
   };
 
   updateNumPassengers = (newAdults,newSeniors,newChildren,newPets) => {
-    if(newAdults < this.state.numMilitary){
-      this.setState({
-        numMilitary: newAdults
-      });
-    }
     this.setState({
       numPassengers: {
         adults: newAdults,
