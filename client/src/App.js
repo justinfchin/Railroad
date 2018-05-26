@@ -92,7 +92,9 @@ class Date extends Component {
 
   render() {
     return (
-      <DatePicker ref="date" className="Date" selected={this.state.date} onChange={this.handleChange}/>
+      <DatePicker ref="date" className="Date" selected={this.state.date}  
+                  filterDate={(date) => {return moment().subtract(1, "days") < date && moment().add(365, "days") > date;}} 
+                  onChange={this.handleChange}/>
     );
   }
 }
