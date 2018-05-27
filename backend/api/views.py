@@ -100,6 +100,13 @@ def calc_trip_fare(request, trip_date, start_station, end_station, reg_adults, m
 
 
 @csrf_exempt
+def update_seats_free(request, train_id_p, trip_date, origin, destination, num_of_passengers):
+    with connection.cursor() as cursor:
+        args = cursor.callproc('update_seats_free', [train_id_p, trip_date, origin, destination, num_of_passengers])
+    return HttpResponse(status=201)
+
+
+@csrf_exempt
 def passengers_list(request):
     """List all passengers, or create a new passenger"""
     return __endpoint_list(Passengers, PassengersSerializer, request)
