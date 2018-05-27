@@ -628,7 +628,7 @@ class PassengerSpecs extends Component {
 	}
 
 	handleClick = () => {
-    fetch('http://railroadbackend.appspot.com/passengers/', {
+    fetch('https://railroadbackend.appspot.com/passengers/', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -642,7 +642,7 @@ class PassengerSpecs extends Component {
         preferred_billing_address: this.refs.address.value,
       }),
     }).then(res => res.json()).then(passenger => {
-      fetch('http://railroadbackend.appspot.com/reservations/', {
+      fetch('https://railroadbackend.appspot.com/reservations/', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
