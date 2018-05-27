@@ -443,6 +443,34 @@ th {
   animation: spin 1s linear infinite;
 }
 
+.fadeIn{
+  opacity: 1;
+  width: 8em;
+  height: 1.5em;
+  transition: width 0.1s, height 0.1s, opacity 0.1s 0.1s;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 2em;
+  border: thick solid #165400;
+  line-height: 1.5em;
+  background-color: #A3FA85; 
+}
+
+.fadeOut{
+  opacity: 0;
+  width: 0;
+  height: 0;
+  transition: width 1s 1s, height 1s 1s, opacity 1s;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 2em;
+  border: thick solid #165400;
+  line-height: 1.5em;
+  background-color: #A3FA85; 
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

@@ -657,9 +657,11 @@ class PassengerSpecs extends Component {
       });
     });
 
+    this.props.updateShowResults(true);
+    this.props.updateTripBooked();
+    this.props.updateFare("reset");
 		this.props.updateNumPassengers(0,0,0,0);
 		this.props.updateConfirmPassCount();
-		this.props.updateShowResults(true);
 		this.props.onClose();
 	}
 
@@ -776,7 +778,8 @@ class Results extends Component {
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
             				updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
             				updateShowResults={(booked) => this.props.updateShowResults(booked)} onClose={() => this.closeModal()} date={this.props.date}
-                    fare={this.props.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}/>
+                    fare={this.props.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}
+                    tripBooked={this.props.tripBooked} updateTripBooked={() => this.props.updateTripBooked()}/>
         </Modal>
       </div>
     );
@@ -792,6 +795,14 @@ class TripsLoader extends Component {
     }else{
       return null;
     }
+  }
+}
+
+class NotifyBooked extends Component {
+  render() {
+    return(
+      <div className={this.props.tripBooked ? "fadeIn" : "fadeOut"}>Trip Booked!</div>
+    );
   }
 }
 
@@ -819,6 +830,7 @@ class App extends Component {
       trainID: 0,
       tripsLoading: false,
       fareLoading: false,
+      tripBooked: false,
     };
   };
 
@@ -950,6 +962,17 @@ class App extends Component {
     });
   };
 
+  updateTripBooked = () => {
+    this.setState({
+      tripBooked: true
+    });
+    setTimeout(() => {
+      this.setState({
+        tripBooked: false
+      });
+    }, 1000);
+  };
+
   loadTrips = (date,origin,originID,destination,destinationID,trainID,availableTrips) => {
   	var trip = {};
   	fetch('https://railroadbackend.appspot.com/seats_free/' + date + '/' + originID + '/' + destinationID + '/' + trainID).then(res => res.json()).then(res => {
@@ -1065,13 +1088,15 @@ class App extends Component {
         			findAvailableTrips={(date,origin,destination) => this.findAvailableTrips(date,origin,destination)}
               origin={this.state.origin} destination={this.state.destination} updateOrigin={(origin) => this.updateOrigin(origin)}
               updateDestination={(destination) => this.updateDestination(destination)} updateTripsLoading={(tripsLoading) => this.updateTripsLoading(tripsLoading)}/>
+        <NotifyBooked tripBooked={this.state.tripBooked}/>
         <TripsLoader tripsLoading={this.state.tripsLoading}/>
         <Results showResults={this.state.showResults} updateShowResults={(booked) => this.updateShowResults(booked)} date={this.state.date} 
         			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.updateNumPassengers(adults,seniors,children,pets)}
         			availableTrips={this.state.availableTrips} numMilitary={this.state.numMilitary} updateNumMilitary={(numMilitary) => this.updateNumMilitary(numMilitary)}
               fare={this.state.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.updateFare(origin,destination,adults,military,seniors,children,pets)}
               origin={this.state.origin} destination={this.state.destination} fareLoading={this.state.fareLoading} updateFareLoading={(fareLoading) => this.updateFareLoading(fareLoading)}
-              trainID={this.state.trainID} updateTrainID={newTrainID => this.updateTrainID(newTrainID)}/>
+              trainID={this.state.trainID} updateTrainID={newTrainID => this.updateTrainID(newTrainID)} tripBooked={this.state.tripBooked}
+              updateTripBooked={() => this.updateTripBooked()}/>
       </div>
     );
   }
