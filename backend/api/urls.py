@@ -1,15 +1,5 @@
 from django.conf.urls import url
-#from .views import fare_types
 import views
-from .models import FareTypes
-from .models import Passengers
-from .models import Reservations
-from .models import SeatsFree
-from .models import Segments
-from .models import Stations
-from .models import StopsAt
-from .models import Trains
-from .models import Trips
 
 urlpatterns = [
     url(r'^$',
@@ -22,6 +12,9 @@ urlpatterns = [
 
     url(r'^calc_trip_fare/(?P<trip_date>[\d\-]+)/(?P<start_station>[0-9]+)/(?P<end_station>[0-9]+)/(?P<reg_adults>[0-9]+)/(?P<mt_adults>[0-9]+)/(?P<senior>[0-9]+)/(?P<children>[0-9]+)/(?P<pets>[0-9]+)/$',
 	views.calc_trip_fare),
+
+    url(r'^update_seats_free/(?P<train_id_p>[0-9]+)/(?P<trip_date>[0-9]+)/(?P<origin>[0-9]+)/(?P<destination>[0-9]+)/(?P<num_of_passengers>[0-9]+)/$',
+	views.update_seats_free),
 
 
     url(r'^passengers/$',

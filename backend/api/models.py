@@ -36,7 +36,7 @@ class Passengers(models.Model):
 
 class Reservations(models.Model):
     reservation_id = models.AutoField(primary_key=True)
-    reservation_date = models.DateTimeField(blank=True, null=True)
+    reservation_date = models.DateField(blank=True, null=True)
     paying_passenger = models.ForeignKey(Passengers, models.DO_NOTHING)
     card_number = models.CharField(max_length=16, blank=True, null=True)
     billing_address = models.CharField(max_length=100, blank=True, null=True)
