@@ -670,10 +670,16 @@ class PassengerSpecs extends Component {
       });
     });
 
+    //update seats free after booking a trip
+    var totalPassengers = this.props.numPassengers.adults + this.props.numPassengers.seniors + this.props.numPassengers.children;
+    console.log(totalPassengers);
+    fetch('https://railroadbackend.appspot.com/update_seats_free/' + this.props.trainID + '/' + this.props.date.format("YYYY-MM-DD") + '/' + this.props.originID + '/' + this.props.destinationID + '/' + totalPassengers + '/');
+
     this.props.updateShowResults(true);
     this.props.updateTripBooked();
     this.props.updateFare("reset");
 		this.props.updateNumPassengers(0,0,0,0);
+    this.props.updateNumMilitary(0);
 		this.props.updateConfirmPassCount();
 		this.props.onClose();
 	}
@@ -790,9 +796,11 @@ class Results extends Component {
                       updateFareLoading={(fareLoading) => this.props.updateFareLoading(fareLoading)} singleFares={this.props.singleFares}/>
             <PassengerSpecs confirmPassCount={this.state.confirmPassCount} updateConfirmPassCount={() => this.updateConfirmPassCount()} numPassengers={this.props.numPassengers} 
             				updateNumPassengers={(adults,seniors,children,pets) => this.props.updateNumPassengers(adults,seniors,children,pets)} 
+                    numMilitary={this.props.numMilitary} updateNumMilitary={(numMilitary) => this.props.updateNumMilitary(numMilitary)}
             				updateShowResults={(booked) => this.props.updateShowResults(booked)} onClose={() => this.closeModal()} date={this.props.date}
                     fare={this.props.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.props.updateFare(origin,destination,adults,military,seniors,children,pets)}
-                    tripBooked={this.props.tripBooked} updateTripBooked={() => this.props.updateTripBooked()}/>
+                    tripBooked={this.props.tripBooked} updateTripBooked={() => this.props.updateTripBooked()}
+                    originID={this.props.originID} destinationID={this.props.destinationID} trainID={this.props.trainID}/>
         </Modal>
       </div>
     );
@@ -1134,7 +1142,8 @@ class App extends Component {
         			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.updateNumPassengers(adults,seniors,children,pets)}
         			availableTrips={this.state.availableTrips} numMilitary={this.state.numMilitary} updateNumMilitary={(numMilitary) => this.updateNumMilitary(numMilitary)}
               fare={this.state.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.updateFare(origin,destination,adults,military,seniors,children,pets)}
-              origin={this.state.origin} destination={this.state.destination} fareLoading={this.state.fareLoading} updateFareLoading={(fareLoading) => this.updateFareLoading(fareLoading)}
+              origin={this.state.origin} destination={this.state.destination} originID={this.state.originID} destinationID={this.state.destinationID}
+              fareLoading={this.state.fareLoading} updateFareLoading={(fareLoading) => this.updateFareLoading(fareLoading)}
               trainID={this.state.trainID} updateTrainID={newTrainID => this.updateTrainID(newTrainID)} tripBooked={this.state.tripBooked}
               updateTripBooked={() => this.updateTripBooked()} singleFares={this.state.singleFares} updateSingleFares={(adult,military,senior,child,pet) => this.updateSingleFares(adult,military,senior,child,pet)}/>
       </div>

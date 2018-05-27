@@ -406,6 +406,7 @@ th {
 
 .PassengerType {
   position: absolute;
+  line-height: 1em;
 }
 
 .PassengerAge {
