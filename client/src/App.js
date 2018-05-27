@@ -718,6 +718,11 @@ class Results extends Component {
     });
   }
 
+  handleClick(trip) {
+    this.openModal();
+    this.props.updateTrainID(trip.train);
+  }
+
   updateConfirmPassCount = () => {
   	this.setState({
   		confirmPassCount: !this.state.confirmPassCount,
@@ -726,7 +731,7 @@ class Results extends Component {
 
   createTrips = (trip) => {
   	return (
-  		<tr key={trip.train} className="tripRow" onClick={this.openModal}>
+  		<tr key={trip.train} className="tripRow" onClick={() => this.handleClick(trip)}>
   			<td>{trip.train}</td>
 	        <td>{trip.departure_time}</td>
 	        <td>{trip.arrival_time}</td>
@@ -811,6 +816,7 @@ class App extends Component {
       origin: "",
       destination: "",
       fare: 0,
+      trainID: 0,
       tripsLoading: false,
       fareLoading: false,
     };
@@ -924,6 +930,12 @@ class App extends Component {
         });
       }));
     }
+  };
+
+  updateTrainID = (newTrainID) => {
+    this.setState({
+      trainID: newTrainID
+    });
   };
 
   updateTripsLoading = (tripsLoading) => {
@@ -1058,7 +1070,8 @@ class App extends Component {
         			numPassengers={this.state.numPassengers} updateNumPassengers={(adults,seniors,children,pets) => this.updateNumPassengers(adults,seniors,children,pets)}
         			availableTrips={this.state.availableTrips} numMilitary={this.state.numMilitary} updateNumMilitary={(numMilitary) => this.updateNumMilitary(numMilitary)}
               fare={this.state.fare} updateFare={(origin,destination,adults,military,seniors,children,pets) => this.updateFare(origin,destination,adults,military,seniors,children,pets)}
-              origin={this.state.origin} destination={this.state.destination} fareLoading={this.state.fareLoading} updateFareLoading={(fareLoading) => this.updateFareLoading(fareLoading)}/>
+              origin={this.state.origin} destination={this.state.destination} fareLoading={this.state.fareLoading} updateFareLoading={(fareLoading) => this.updateFareLoading(fareLoading)}
+              trainID={this.state.trainID} updateTrainID={newTrainID => this.updateTrainID(newTrainID)}/>
       </div>
     );
   }
