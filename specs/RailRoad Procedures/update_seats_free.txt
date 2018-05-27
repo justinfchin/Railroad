@@ -1,0 +1,26 @@
+CREATE PROCEDURE `update_seats_free`(IN train_id_p INT(11), IN trip_date DATE , IN origin INT(11), IN destination INT(11),IN num_of_passengers INT(11) )
+BEGIN
+DECLARE temp_curr_station INT(11);
+DECLARE temp_segment_id INT(11);
+DECLARE temp_n_end INT(11);
+DECLARE temp_s_end INT (11); 
+
+SET temp_curr_station = origin;
+
+if(destination>origin) THEN 
+	while(temp_curr_station != destination) DO 
+		SELECT segment_id,seg_s_end INTO temp_segment_id,temp_s_end FROM segments WHERE seg_n_end = temp_curr_station; 
+        UPDATE seats_free SET freeseat = freeseat - num_of_passengers WHERE train_id = train_id_p AND segment_id = temp_segment_id AND seat_free_date = trip_date;
+        SET temp_curr_station = temp_s_end;
+	END while; 
+  SELECT 'TRUE';
+ELSE 
+	while(temp_curr_station != destination) DO 
+		SELECT segment_id,seg_n_end INTO temp_segment_id,temp_n_end FROM segments WHERE seg_s_end = temp_curr_station; 
+        UPDATE seats_free SET freeseat = freeseat - num_of_passengers WHERE train_id = train_id_p AND segment_id = temp_segment_id AND seat_free_date = trip_date;
+        SET temp_curr_station = temp_n_end;
+	END while; 
+  SELECT 'TRUE';
+END IF; 
+
+END
