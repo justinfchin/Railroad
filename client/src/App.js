@@ -360,11 +360,9 @@ class Military extends Component {
       this.props.updateLoading(true);
       this.props.updateFare(this.props.origin,this.props.destination,this.props.numPassengers.adults,this.props.numMilitary+1,this.props.numPassengers.seniors,this.props.numPassengers.children,this.props.numPassengers.pets);
       this.props.updateNumMilitary(1);
-    }else{
-      alert('Limit 1 military discount per adult.')
     }
-    if(this.props.numPassengers.adults === 0){
-      alert('Military discounts can only be added to an adult. Please add an adult first.');
+    if(this.props.numPassengers.adults === this.props.numMilitary){
+      alert('Military discounts are limited 1 per adult. Please add another adult first.');
     }
   };
 
@@ -427,7 +425,7 @@ class ReservationSpecs extends Component {
         this.props.updateNumMilitary(-1);
       }
       this.props.updateNumPassengers(currAdultsCount,prevSeniorsCount,prevChildrenCount,prevPetsCount);
-      this.props.updateFare(this.props.origin,this.props.destination,currAdultsCount,this.props.numMilitary,prevSeniorsCount,prevChildrenCount,prevPetsCount);
+      this.props.updateFare(this.props.origin,this.props.destination,currAdultsCount,this.props.numMilitary-1,prevSeniorsCount,prevChildrenCount,prevPetsCount);
     }
   };
 
@@ -643,6 +641,20 @@ class PassengerSpecs extends Component {
         preferred_card_number: this.refs.cc_num.value,
         preferred_billing_address: this.refs.address.value,
       }),
+    }).then(res => res.json()).then(passenger => {
+      fetch('http://railroadbackend.appspot.com/reservations/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reservation_date: this.props.date.format("YYYY-MM-DD"),
+          paying_passenger: passenger.passenger_id,
+          card_number: passenger.preferred_card_number,
+          billing_address: passenger.preferred_billing_address,
+        }),
+      });
     });
 
 		this.props.updateNumPassengers(0,0,0,0);
