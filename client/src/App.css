@@ -210,6 +210,7 @@
     }
 
     .PassengerDescription {
+      width: 3em;
       margin-top: 1em;
       position: relative;
       padding-right: 6em;
@@ -251,7 +252,7 @@
 
     .bookTrip {
       margin-top: 10%;
-      font-size: 1em;
+      font-size: 1.5em;
       padding: 0.5em;
       border: thin solid;
       background-color: #E5E8E8;
@@ -259,7 +260,6 @@
     }
 
     .fare {
-      height: 2.1em;
       width: 8em;
       font-size: 1.5em;
       margin-right: 2em;
@@ -300,6 +300,7 @@
   width: auto;
   margin-top: -0.5em;
   padding-top: 1em;
+  border-bottom: thick solid;
 }
 
 .TripInfo {
@@ -318,6 +319,11 @@
 
 .pass_input:focus {
   outline: none;
+}
+
+.submit:hover, .bookTrip:hover {
+  background-color: #15D388;
+  border-color: #165400;
 }
 
 .LessPass:hover, .MorePass:hover {
@@ -400,6 +406,7 @@ th {
 
 .PassengerType {
   position: absolute;
+  line-height: 1em;
 }
 
 .PassengerAge {
@@ -441,6 +448,34 @@ th {
   width: 20px;
   height: 20px;
   animation: spin 1s linear infinite;
+}
+
+.fadeIn{
+  opacity: 1;
+  width: 8em;
+  height: 1.5em;
+  transition: width 0.1s, height 0.1s, opacity 0.1s 0.1s;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 2em;
+  border: thick solid #165400;
+  line-height: 1.5em;
+  background-color: #A3FA85; 
+}
+
+.fadeOut{
+  opacity: 0;
+  width: 0;
+  height: 0;
+  transition: width 1s 1s, height 1s 1s, opacity 1s;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 2em;
+  border: thick solid #165400;
+  line-height: 1.5em;
+  background-color: #A3FA85; 
 }
 
 @keyframes spin {
