@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE PROCEDURE `calc_fare_for_trip`(IN trip_date date ,IN start_station INT(11),IN end_station INT(11),IN reg_adults INT(100), IN mt_adults INT(100),IN seniors INT(100), IN children INT(100), IN pets INT(100), OUT f_fare decimal(10,2))
 this_proc:BEGIN
 
@@ -51,7 +52,7 @@ SET days_in_between = DATEDIFF(trip_date,curr_date);
 
 if(days_in_between > 100) THEN
 set discount = 31;
-ELSEIF (days_in_between<0) THEN 
+ELSEIF (days_in_between<-1) THEN 
 SET f_fare = 0;
 SELECT f_fare;
 LEAVE this_proc;
@@ -86,3 +87,5 @@ END IF ;
     SELECT f_fare;
 
 END this_proc
+$$
+DELIMITER ;

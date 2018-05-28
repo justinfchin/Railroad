@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE PROCEDURE `update_seats_free`(IN train_id_p INT(11), IN trip_date DATE , IN origin INT(11), IN destination INT(11),IN num_of_passengers INT(11) )
 BEGIN
 DECLARE temp_curr_station INT(11);
@@ -24,3 +25,5 @@ ELSE
 END IF; 
 
 END
+$$
+DELIMITER ;
