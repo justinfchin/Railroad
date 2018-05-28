@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE PROCEDURE `insert_passenger`(IN fname_ varchar(30),IN lname_ varchar(100),IN email_ varchar(100),IN password_ varchar(100),IN pcn varchar(16),IN pba varchar(100))
 BEGIN
 
@@ -8,3 +9,5 @@ BEGIN
     END IF;
     
 END
+$$
+DELIMITER ;

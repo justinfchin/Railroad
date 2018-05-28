@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE PROCEDURE `calc_seats_free`(IN s_station int(11),IN e_station int(11),IN t_date date ,IN t_id INT (11),OUT seats_free int(11))
 BEGIN
 DECLARE temp_station INT(11);	
@@ -56,3 +57,5 @@ DECLARE min_buffer INT (11);
     
 
 END
+$$
+DELIMITER ;
